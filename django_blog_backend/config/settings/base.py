@@ -73,7 +73,7 @@ DJANGO_APPS = [
     "django.contrib.sites",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "django.contrib.humanize", # Handy template tags
+    "django.contrib.humanize",  # Handy template tags
     "django.contrib.admin",
     "django.forms",
 ]
@@ -91,7 +91,7 @@ THIRD_PARTY_APPS = [
     "corsheaders",
     "drf_spectacular",
     "graphene_django",
-    "django_htmx"
+    "django_htmx",
 ]
 
 LOCAL_APPS = [
@@ -231,9 +231,9 @@ SESSION_COOKIE_HTTPONLY = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#csrf-cookie-httponly
 CSRF_COOKIE_HTTPONLY = False
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost:5173']
-CSRF_COOKIE_SAMESITE = 'Lax'
-SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_TRUSTED_ORIGINS = ["http://localhost:5173"]
+CSRF_COOKIE_SAMESITE = "Lax"
+SESSION_COOKIE_SAMESITE = "Lax"
 
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
@@ -347,3 +347,6 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",
     "http://localhost:5173",
 ]
+
+
+MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"

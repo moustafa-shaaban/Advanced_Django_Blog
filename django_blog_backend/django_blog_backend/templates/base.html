@@ -63,13 +63,22 @@
   </div>
   <div class="container">
     {% if messages %}
+    <!-- Iterate over Django messages -->
     {% for message in messages %}
-    <div class="alert alert-dismissible {% if message.tags %}alert-{{ message.tags }}{% endif %}">
-      {{ message }}
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
+        <!-- Display messages using SweetAlert.js -->
+        <script>
+            Swal.fire({
+                icon: '{{ message.tags }}',  // Use the message tags as SweetAlert.js icons
+                title: '{{ message.tags|capfirst }}',  // Capitalize the first letter of the tag
+                text: '{{ message }}',
+                timer: 3000,  // Automatically close after 3 seconds
+                showConfirmButton: false,  // Do not show a confirmation button
+                position: 'bottom-center',  // Show notifications at the top-end
+                // Add more options as needed
+            });
+        </script>
     {% endfor %}
-    {% endif %}
+{% endif %}
     {% block main %}
     {% block content %}
     <p>Use this document as a way to quick start any new project.</p>
