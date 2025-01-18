@@ -14,7 +14,7 @@ A blog project built using
   [Vue-multiselect](https://vue-multiselect.js.org/),
 
 
-[Full Review](https://moustafashaaban.github.io/project-reviews/django/Django-Blog/Django-Blog/)
+[Full Review](https://moustafa-shaaban.github.io/project-reviews/django/Django-Blog/Django-Blog/)
 
 > [!CAUTION]
 > Currently vue-frontend GraphQL implementation is not working correctly if you are using a chromium based web browser (like Google Chrome for example). but, it is working very well if you are using Firefox web browser.
@@ -62,7 +62,7 @@ Currently in Vue frontend users can:
 
 * [Youtube](https://www.youtube.com/watch?v=mxe6Ca5yLOo)
 
-* [Article](https://moustafashaaban.github.io/project-reviews/django/Django-Blog/Django-Blog/)
+* [Article](https://moustafa-shaaban.github.io/project-reviews/django/Django-Blog/Django-Blog/)
 
 
 ###  Project Description:
@@ -143,7 +143,7 @@ recieve an email activation link.
 ### To get started with this project with Docker:
 * Make sure that Docker and docker-compose are installed in your system.
 
-* Clone the repository: git clone https://github.com/MoustafaShaaban/Advanced_Django_Blog.git
+* Clone the repository: git clone https://github.com/Moustafa-Shaaban/Advanced_Django_Blog.git
 
 * Change directory to docker_blog_backend directory ``` cd docker_blog_backend ```
 
