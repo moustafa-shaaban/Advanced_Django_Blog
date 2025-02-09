@@ -2,31 +2,27 @@ import axios from "axios";
 import { Cookies } from "quasar";
 
 
+axios.defaults.xsrfCookieName = 'csrftoken'
+axios.defaults.xsrfHeaderName = "X-CSRFToken"
+
 export const axiosAPI = axios.create({
     baseURL: import.meta.env.VITE_REST_API_URL,
     withCredentials: true,
-    timeout: 4000,
-    headers: {
-        'X-CSRFToken': Cookies.get('csrftoken')
-    }
+    withXSRFToken: true,
 })
 
 export const axiosGraphQL = axios.create({
     baseURL: import.meta.env.VITE_GraphQL_URL,
     withCredentials: true,
-    timeout: 4000,
+    withXSRFToken: true,
     headers: {
-        'X-CSRFToken': Cookies.get('csrftoken')
+        'Access-Control-Max-Age': '2592000',
     }
 })
 
 
 export const getBlogPosts = async () => {
-    const response = await axiosAPI.get("posts/", {
-        headers: {
-            'X-CSRFToken': Cookies.get('csrftoken')
-        }
-    })
+    const response = await axiosAPI.get("posts/")
     return response.data
 }
 
@@ -74,37 +70,21 @@ export const getCommentById = async (id) => {
 }
 
 export const createPost = async (post) => {
-    const response = await axiosAPI.post("posts/", post, {
-        headers: {
-            'X-CSRFToken': Cookies.get('csrftoken')
-        }
-    })
+    const response = await axiosAPI.post("posts/", post)
     return response.data
 }
 
 export const deletePost = async (slug) => {
-    await axiosAPI.delete("/posts/" + slug, {
-        headers: {
-            'X-CSRFToken': Cookies.get('csrftoken')
-        }
-    })
+    await axiosAPI.delete("/posts/" + slug)
 }
 
 export const deleteComment = async (id) => {
-    await axiosAPI.delete("/comments/" + id, {
-        headers: {
-          'X-CSRFToken': Cookies.get('csrftoken')
-        }
-    })
+    await axiosAPI.delete("/comments/" + id)
 }
 
 
 export const createTag = async (tag) => {
-    const response = await axiosAPI.post("tags/", tag, {
-        headers: {
-            'X-CSRFToken': Cookies.get('csrftoken')
-        }
-    })
+    const response = await axiosAPI.post("tags/", tag)
     return response.data
 }
 
@@ -114,28 +94,17 @@ export const searchPost = async (title) => {
 }
 
 export const addPostToFavorites = async (id) => {
-    const response = await axiosAPI.post("/favorite-post/", {id}, {
-        headers: {
-            'X-CSRFToken': Cookies.get('csrftoken')
-        }
-    })
+    const response = await axiosAPI.post("/favorite-post/", {id})
     return response.data
 };
 
 export const likePost = async (id) => {
-    const response = await axiosAPI.post("/like-post/", {id}, {
-        headers: {
-            'X-CSRFToken': Cookies.get('csrftoken')
-        }
-    })
+    const response = await axiosAPI.post("/like-post/", {id})
     return response.data
 }
 
 export const getUserFavoritePostList = async () => {
     const response = await axiosGraphQL("/graphql/",{}, {
-        headers: {
-            'X-CSRFToken': Cookies.get('csrftoken')
-        },
         data: {
             query: `
                 query {

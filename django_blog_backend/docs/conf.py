@@ -28,7 +28,7 @@ django.setup()
 # -- Project information -----------------------------------------------------
 
 project = "Django Blog Backend"
-copyright = """2024, Moustafa Shaaban"""
+copyright = """2025, Moustafa Shaaban"""
 author = "Moustafa Shaaban"
 
 

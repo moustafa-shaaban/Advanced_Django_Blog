@@ -6,9 +6,10 @@ from django_blog_backend.users.models import User
 
 def test_user_detail(user: User):
     assert (
-        reverse("api:user-detail", kwargs={"pk": user.pk}) == f"/api/users/{user.pk}/"
+        reverse("api:user-detail", kwargs={"username": user.username})
+        == f"/api/users/{user.username}/"
     )
-    assert resolve(f"/api/users/{user.pk}/").view_name == "api:user-detail"
+    assert resolve(f"/api/users/{user.username}/").view_name == "api:user-detail"
 
 
 def test_user_list():

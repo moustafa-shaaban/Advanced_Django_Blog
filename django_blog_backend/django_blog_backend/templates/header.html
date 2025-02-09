@@ -23,19 +23,13 @@
             <li>
               <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light"
                 aria-pressed="false">
-                Light
-                <svg class="bi ms-auto d-none">
-                  <use href="#check2"></use>
-                </svg>
+                Light <i class="bi bi-moon-fill"></i>
               </button>
             </li>
             <li>
               <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="dark"
                 aria-pressed="true">
-                Dark
-                <svg class="bi ms-auto d-none">
-                  <use href="#check2"></use>
-                </svg>
+                Dark <i class="bi bi-brightness-high-fill"></i>
               </button>
             </li>
           </ul>
@@ -99,7 +93,7 @@
 
         </a>
         <ul class="dropdown-menu text-small">
-          <li><a class="dropdown-item" href="{% url 'users:detail' request.user.pk %}">{% translate "My Profile" %}</a>
+          <li><a class="dropdown-item" href="{% url 'users:detail' request.user %}">{% translate "My Profile" %}</a>
           </li>
           <li>
             <hr class="dropdown-divider">

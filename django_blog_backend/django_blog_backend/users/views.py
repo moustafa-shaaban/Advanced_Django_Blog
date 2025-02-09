@@ -12,8 +12,8 @@ from django_blog_backend.users.models import User
 
 class UserDetailView(LoginRequiredMixin, DetailView):
     model = User
-    slug_field = "id"
-    slug_url_kwarg = "id"
+    slug_field = "username"
+    slug_url_kwarg = "username"
 
 
 user_detail_view = UserDetailView.as_view()
@@ -40,7 +40,7 @@ class UserRedirectView(LoginRequiredMixin, RedirectView):
     permanent = False
 
     def get_redirect_url(self) -> str:
-        return reverse("users:detail", kwargs={"pk": self.request.user.pk})
+        return reverse("users:detail", kwargs={"username": self.request.user.username})
 
 
 user_redirect_view = UserRedirectView.as_view()

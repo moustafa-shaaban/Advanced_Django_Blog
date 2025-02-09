@@ -24,11 +24,7 @@ export const useAuthStore = defineStore('auth', {
         },
 
         async login(email, password) {
-            await axiosAPI.post('/login/', {email, password}, {
-                headers: {
-                    'X-CSRFToken': Cookies.get("csrftoken")
-                }
-            })
+            await axiosAPI.post('/login/', {email, password})
             const response = await axiosAPI.get('username/',)
             this.username = response.data.username
             this.isAuthenticated = true;
@@ -40,11 +36,7 @@ export const useAuthStore = defineStore('auth', {
         },
 
         async logout() {
-            await axiosAPI.post('accounts/logout/', {}, {
-                headers: {
-                    'X-CSRFToken': Cookies.get('csrftoken')
-                }
-            })
+            await axiosAPI.post('accounts/logout/', {})
             this.isAuthenticated = null;
             localStorage.removeItem('Authenticated')
 
