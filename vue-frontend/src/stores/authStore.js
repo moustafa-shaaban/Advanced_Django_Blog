@@ -3,6 +3,7 @@ import { useLocalStorage } from "@vueuse/core";
 import { Cookies } from "quasar"
 
 import { axiosAPI } from "../api/axios";
+import axios from "axios";
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
@@ -36,7 +37,11 @@ export const useAuthStore = defineStore('auth', {
         },
 
         async logout() {
-            await axiosAPI.post('accounts/logout/', {})
+            await axiosAPI.post('/api-auth/logout/', {
+                
+            }, {
+                withCredentials: true,
+            })
             this.isAuthenticated = null;
             localStorage.removeItem('Authenticated')
 

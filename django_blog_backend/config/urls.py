@@ -24,6 +24,8 @@ urlpatterns = [
     # User management
     path("users/", include("django_blog_backend.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
+    # Include the API endpoints:
+    path("_allauth/", include("allauth.headless.urls")),
     # Your stuff: custom urls includes go here
     # ...
     # Media files

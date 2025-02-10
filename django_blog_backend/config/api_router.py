@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.urls import path
+from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework.routers import SimpleRouter
 
@@ -27,4 +27,5 @@ urlpatterns += [
     path("username/", views.username_view, name="username"),
     path('csrf/', views.get_csrf, name='csrf'),
     path('login/', views.login_view, name='login'),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]

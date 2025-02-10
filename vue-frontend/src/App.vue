@@ -69,7 +69,7 @@
                   <q-list>
                     <q-item clickable v-close-popup>
                       <q-item-section>
-                        <q-breadcrumbs-el label="GraphQL Post List" icon="notes" to="/graphql/post-list"  />
+                        <q-breadcrumbs-el label="GraphQL Post List" icon="notes" to="/graphql/post-list/"  />
                       </q-item-section>
                     </q-item>
 

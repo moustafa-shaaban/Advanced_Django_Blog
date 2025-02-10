@@ -128,7 +128,7 @@ const router = createRouter({
     },
     // GraphQL Routes
     {
-      path: '/graphql/tags',
+      path: '/graphql/tags/',
       name: 'graphql-tags',
       component: GraphQLTagList,
       meta: {
@@ -136,7 +136,7 @@ const router = createRouter({
       }
     },
     {
-      path: '/graphql/post-list',
+      path: '/graphql/post-list/',
       name: 'graphql-post-list',
       component: GraphQLPostList,
       meta: {
@@ -144,7 +144,7 @@ const router = createRouter({
       }
     },
     {
-      path: '/graphql-add-post',
+      path: '/graphql-add-post/',
       name: 'graphql-add-post',
       component: GraphQLAddPost,
       meta: {
@@ -152,7 +152,7 @@ const router = createRouter({
       }
     },
     {
-      path: '/graphql/edit-post/:slug',
+      path: '/graphql/edit-post/:slug/',
       name: 'graphql-edit-post',
       component: GraphQLEditPost,
       meta: {
@@ -160,7 +160,7 @@ const router = createRouter({
       }
     },
     {
-      path: '/graphql-user-favorite-post-list',
+      path: '/graphql-user-favorite-post-list/',
       name: 'graphql-user-favorite-post-list',
       component: GraphQLUserFavoritePostList,
       meta: {
@@ -168,7 +168,7 @@ const router = createRouter({
       }
     },
     {
-      path: '/graphql-user-post-list',
+      path: '/graphql-user-post-list/',
       name: 'graphql-user-post-list',
       component: GraphQLUserPostList,
       meta: {
@@ -176,7 +176,7 @@ const router = createRouter({
       }
     },
     {
-      path: '/graphql/add-tag',
+      path: '/graphql/add-tag/',
       name: 'graphql-add-tag',
       component: GraphQLAddTag,
       meta: {
@@ -184,7 +184,7 @@ const router = createRouter({
       }
     },
     {
-      path: '/graphql/edit-comment/:id',
+      path: '/graphql/edit-comment/:id/',
       name: 'graphql-edit-comment',
       component: GraphQLEditComment,
       meta: {
@@ -192,7 +192,7 @@ const router = createRouter({
       }
     },
     {
-      path: '/graphql-search',
+      path: '/graphql-search/',
       name: 'graphql-search',
       component: GraphQLSearchPosts,
       meta: {
