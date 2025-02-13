@@ -52,8 +52,6 @@ export default {
                 withCredentials: true,
                 timeout: 4000,
                 headers: {
-                    'Access-Control-Allow-Origin': 'http://localhost:5173/',
-                    'Content-Type': 'application/json',
                     'X-CSRFToken': Cookies.get('csrftoken')
                 },
                 data: {
@@ -293,8 +291,7 @@ export default {
                 @click="refreshPage">
                 Reloading</q-btn> the page</span>
         <!-- We can assume by this point that `isSuccess === true` -->
-        <span v-else-if="allPosts.length == 0">No Posts available Try <q-btn size="sm" color="primary"
-                @click="refreshPage">
+        <span v-else-if="allPosts.length == 0">No Posts available Try <q-btn size="sm" color="primary" @click="refreshPage">
                 Reloading</q-btn> the page
             or click on the plus sign to add a new note</span>
         <div v-else class="q-mt-lg">
@@ -405,7 +402,7 @@ export default {
                                 deselect-label="You must select at least one tag" :options="tags.map(i => i.id)"
                                 :searchable="true" :allow-empty="false">
                                 <template slot="singleLabel" slot-scope="{ tag }"><strong>{{ tag.name
-                                        }}</strong></template>
+                                }}</strong></template>
                             </multiselect>
                             <!-- <select v-model="tags" multiple>
                                 <option v-for="tag in data" id="tag.id" :value="tag.id">{{ tag.name }}</option>

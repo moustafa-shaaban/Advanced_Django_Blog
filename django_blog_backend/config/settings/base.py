@@ -73,7 +73,7 @@ DJANGO_APPS = [
     "django.contrib.sites",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "django.contrib.humanize", # Handy template tags
+    # "django.contrib.humanize", # Handy template tags
     "django.contrib.admin",
     "django.forms",
 ]
@@ -82,24 +82,24 @@ THIRD_PARTY_APPS = [
     "crispy_bootstrap5",
     "allauth",
     "allauth.account",
-    'allauth.headless',
     "allauth.mfa",
     "allauth.socialaccount",
-    "allauth.usersessions",
     "rest_framework",
     "rest_framework.authtoken",
     "corsheaders",
     "drf_spectacular",
-    "graphene_django",
-    "django_htmx",
+
+    'django_htmx',
+    'graphene_django',
+    'django_filters'
 ]
 
 LOCAL_APPS = [
     "django_blog_backend.users",
     # Your stuff: custom apps go here
     "django_blog_backend.blog",
-    "django_blog_backend.api",
     "django_blog_backend.graphql_app",
+    "django_blog_backend.api",
     "django_blog_backend.htmx_crud",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -153,15 +153,17 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
-    "django_htmx.middleware.HtmxMiddleware",
 ]
+
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = ["http://localhost:5173"]  # We add your frontend URL here.
+CSRF_TRUSTED_ORIGINS = ['http://localhost:5173']
 
 # STATIC
 # ------------------------------------------------------------------------------
@@ -231,7 +233,7 @@ SESSION_COOKIE_HTTPONLY = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#csrf-cookie-httponly
 CSRF_COOKIE_HTTPONLY = False
 # https://docs.djangoproject.com/en/dev/ref/settings/#x-frame-options
-X_FRAME_OPTIONS = "DENY"
+#X_FRAME_OPTIONS = "DENY"
 
 # EMAIL
 # ------------------------------------------------------------------------------
@@ -318,7 +320,7 @@ REST_FRAMEWORK = {
 }
 
 # django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup
-CORS_URLS_REGEX = r"^/api/.*$"
+# CORS_URLS_REGEX = r"^/api/.*$"
 
 # By Default swagger ui is available only to admin user(s). You can change permission classes to change that
 # See more configuration options at https://drf-spectacular.readthedocs.io/en/latest/settings.html#settings
@@ -331,44 +333,46 @@ SPECTACULAR_SETTINGS = {
 }
 # Your stuff...
 # ------------------------------------------------------------------------------
-CSRF_TRUSTED_ORIGINS = ["http://localhost:5173"]
+# CSRF_TRUSTED_ORIGINS = ["http://localhost:5173", "http://127.0.0.1:5173"]
 CSRF_COOKIE_SAMESITE = "Lax"
 SESSION_COOKIE_SAMESITE = "Lax"
 
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://127.0.0.1:5173",
-    "http://localhost:5173",
-]
+# CORS_ORIGIN_WHITELIST = ("http://localhost:5173",) # Matches the port that Vue.js is using
 
-CORS_ALLOW_METHODS = (
-    "DELETE",
-    "GET",
-    "OPTIONS",
-    "PATCH",
-    "POST",
-    "PUT",
-)
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3000",
+#     "http://127.0.0.1:3000",
+#     "http://127.0.0.1:5173",
+#     "http://localhost:5173",
+# ]
 
-CORS_ALLOW_HEADERS = (
-    "accept",
-    "authorization",
-    "content-type",
-    "user-agent",
-    "x-csrftoken",
-    "x-requested-with",
-)
+# CORS_ALLOW_METHODS = (
+#     "DELETE",
+#     "GET",
+#     "OPTIONS",
+#     "PATCH",
+#     "POST",
+#     "PUT",
+# )
 
-CORS_ALLOW_CREDENTIALS = True
+# CORS_ALLOW_HEADERS = (
+#     "accept",
+#     "authorization",
+#     "content-type",
+#     "user-agent",
+#     "x-csrftoken",
+#     "x-requested-with",
+# )
+
+# CORS_ALLOW_CREDENTIALS = True
 
 
-HEADLESS_FRONTEND_URLS = {
-    "http://127.0.0.1:5173",
-    "http://localhost:5173",
-}
+# HEADLESS_FRONTEND_URLS = {
+#     "http://127.0.0.1:5173",
+#     "http://localhost:5173",
+# }
 
 MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"
