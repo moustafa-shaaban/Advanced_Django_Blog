@@ -162,10 +162,6 @@ MIDDLEWARE = [
     "allauth.account.middleware.AccountMiddleware",
 ]
 
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = ["http://localhost:5173"]  # We add your frontend URL here.
-CSRF_TRUSTED_ORIGINS = ['http://localhost:5173']
-
 # STATIC
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#static-root
@@ -334,41 +330,15 @@ SPECTACULAR_SETTINGS = {
 }
 # Your stuff...
 # ------------------------------------------------------------------------------
-# CSRF_TRUSTED_ORIGINS = ["http://localhost:5173", "http://127.0.0.1:5173"]
 CSRF_COOKIE_SAMESITE = "Lax"
 SESSION_COOKIE_SAMESITE = "Lax"
 
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
-# CORS_ORIGIN_WHITELIST = ("http://localhost:5173",) # Matches the port that Vue.js is using
-
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:3000",
-#     "http://127.0.0.1:3000",
-#     "http://127.0.0.1:5173",
-#     "http://localhost:5173",
-# ]
-
-# CORS_ALLOW_METHODS = (
-#     "DELETE",
-#     "GET",
-#     "OPTIONS",
-#     "PATCH",
-#     "POST",
-#     "PUT",
-# )
-
-# CORS_ALLOW_HEADERS = (
-#     "accept",
-#     "authorization",
-#     "content-type",
-#     "user-agent",
-#     "x-csrftoken",
-#     "x-requested-with",
-# )
-
-# CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = ["http://localhost:5173"]  # We add your frontend URL here.
+CSRF_TRUSTED_ORIGINS = ['http://localhost:5173']
 
 
 # HEADLESS_FRONTEND_URLS = {

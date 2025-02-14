@@ -1,54 +1,19 @@
 <script setup>
-import axios from 'axios';
-import { useQueryClient, useQuery } from '@tanstack/vue-query';
-import { useQuasar, date, Cookies } from 'quasar';
-
+import { useQuery } from '@tanstack/vue-query';
+import { useQuasar, date } from 'quasar';
+import { getUserPosts } from '@/graphqlQueries';
 import { useAuthStore } from '@/stores/authStore';
-
-const queryClient = useQueryClient()
+import { axiosGraphQL } from '@/api/axios';
 
 const authStore = useAuthStore();
+
 const $q = useQuasar();
 // Source: https://stackoverflow.com/a/59778006
 async function getData() {
-    const response = await axios({
-        url: import.meta.env.VITE_GraphQL_URL,
+    const response = await axiosGraphQL({
         method: 'post',
-        withCredentials: true,
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': Cookies.get('csrftoken')
-        },
         data: {
-            query: `
-                query {
-                    userPosts {
-                        title
-                        slug
-                        author {
-                            username
-                        }
-                        content
-                        tag {
-                            id
-                            name
-                        }
-                        publishedAt
-                        updatedAt
-                        slug
-                        favorites {
-                            username
-                        }
-                        comments {
-                            id
-                            user {
-                                username
-                            }
-                            comment
-                        }
-                    }
-                }
-            `
+            query: getUserPosts
         }
     })
 
@@ -71,17 +36,18 @@ const { data, error, isPending, isLoading, isError } = useQuery({
         <div v-else class="q-mt-lg">
             <q-card v-for="post in data.data.userPosts" :key="post.id" class="my-card q-mt-md" flat bordered>
                 <q-item>
-                    <!-- <q-item-section avatar>
-            <q-avatar>
-              <img :src="post.author.avatar">
-            </q-avatar>
-          </q-item-section> -->
+                    <q-item-section avatar>
+                        <q-avatar>
+                            <img :src="post.author.avatar" :alt="post.author.username">
+                        </q-avatar>
+                    </q-item-section>
 
                     <q-item-section>
                         <div class="text-h5">{{ post.title }}</div>
-                        <!-- <div class="q-gutter-sm q-mt-xs">
-              <q-badge v-for="tag in post.tag" :key="tag.id" caption outline color="primary" :label="tag.id" />
-            </div> -->
+                        <div class="q-gutter-sm q-mt-xs">
+                            <q-badge v-for="tag in post.tag" :key="tag.id" caption outline color="primary"
+                                :label="tag.name" />
+                        </div>
                     </q-item-section>
                 </q-item>
 

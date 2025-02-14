@@ -1,301 +1,360 @@
-<script>
-import axios from 'axios';
-import { Notify, Dialog, Cookies } from 'quasar';
-import Multiselect from 'vue-multiselect'
-import moment from 'moment';
-
+<script setup>
+import { ref } from 'vue';
+import { useQueryClient, useQuery, useMutation } from '@tanstack/vue-query';
+import { date, Notify, Dialog } from 'quasar';
+import { getAllPosts, getAllTags } from '@/graphqlQueries';
 import { useAuthStore } from '@/stores/authStore';
-import { axiosAPI } from '@/api/axios';
+import { axiosGraphQL } from '@/api/axios';
 import { createPostMutation, deletePostMutation, deleteCommentMutation, addPostToUserFavoritesMutation, likePostMutation } from '@/graphqlMutations';
+import { useRouter } from 'vue-router';
+import Multiselect from 'vue-multiselect'
+const authStore = useAuthStore();
 
-export default {
-    name: "GraphQLPostList",
-    components: {
-        Multiselect
-    },
-    setup() {
-        const authStore = useAuthStore();
-        return { authStore }
-    },
-    async mounted() {
-        await axiosAPI.get('/tags/').then(response => {
-            this.tags = response.data
-        })
-        await this.getPosts();
-    },
-    data() {
-        return {
-            allPosts: [],
-            postCard: false,
-            commentsCard: false,
-            title: "",
-            content: "",
-            tag: [],
-            tags: [],
+const router = useRouter()
+
+const queryClient = useQueryClient();
+
+const postCard = ref(false);
+const title = ref('')
+const content = ref('')
+const tag = ref([])
+
+// Source: https://stackoverflow.com/a/59778006
+async function getPosts() {
+    const response = await axiosGraphQL({
+        method: 'post',
+        data: {
+            query: getAllPosts
         }
-    },
-    methods: {
-        refreshPage() {
-            window.location.reload();
-        },
-        // https://stackoverflow.com/a/54662898
-        format_date(value) {
-            if (value) {
-                return moment(String(value)).format('DD MMMM YYYY')
+    })
+    return response.data
+}
+
+
+
+async function getTags() {
+    const response = await axiosGraphQL({
+        method: 'post',
+        data: {
+            query: getAllTags
+        }
+    })
+
+    return response.data
+}
+
+const { data, error, isLoading, isError } = useQuery({
+    queryKey: ['graphqlAllPosts'],
+    queryFn: getPosts,
+    onError: async (error) => {
+        Notify.create({
+            message: error.message,
+            color: "negative",
+            actions: [
+                { icon: 'close', color: 'white', round: true, }
+            ]
+        })
+    }
+})
+
+
+
+const { data: tags } = useQuery({
+    queryKey: ['graphqlAllTags'],
+    queryFn: getTags,
+    onError: async (error) => {
+        Notify.create({
+            message: error.message,
+            color: "negative",
+            actions: [
+                { icon: 'close', color: 'white', round: true, }
+            ]
+        })
+    }
+})
+
+async function addPost() {
+    const response = await axiosGraphQL({
+        method: 'post',
+        data: {
+            query: createPostMutation,
+            variables: {
+                "title": title.value,
+                "content": content.value,
+                "tags": parseInt(tag.value)
             }
         },
+    })
 
-        async getPosts() {
-            const response = await axios({
-                url: import.meta.env.VITE_GraphQL_URL,
-                method: 'post',
-                withCredentials: true,
-                timeout: 4000,
-                headers: {
-                    'X-CSRFToken': Cookies.get('csrftoken')
-                },
-                data: {
-                    query: `
-                query ReturnAllPosts {
-                allPosts {
-                    id
-                    slug
-                    title
-                    author {
-                    username
-                    avatar
-                    }
-                    favorites {
-                    username
-                    }
-                    likes {
-                    username
-                    }
-                    content
-                    updatedAt
-                    publishedAt
-                    comments {
-                    id
-                    comment
-                    publishedAt
-                    user {
-                        username
-                    }
-                    }
-                    tag {
-                    id
-                    name
-                    }
-                }
-                }
-            `
-                }
-            })
+    return response.data
+}
 
+const { mutate } = useMutation({
+    mutationFn: addPost,
+    onSuccess: async () => {
+        queryClient.invalidateQueries("graphqlAllPosts")
+        await router.push('/graphql/post-list')
+        Notify.create({
+            message: 'Post Added Successfully',
+            type: "positive",
+            actions: [
+                { icon: 'close', color: 'white', round: true, }
+            ]
+        })
+    },
+    onError: async (error) => {
+        Notify.create({
+            message: error.message,
+            type: "negative",
+            actions: [
+                { icon: 'close', color: 'white', round: true, }
+            ]
+        })
+    },
+})
 
-            this.allPosts = response.data
+async function deletePostFunction(id) {
+    const response = await axiosGraphQL({
+        method: 'post',
+        data: {
+            query: deletePostMutation,
+            variables: {
+                "id": parseInt(id),
+            }
         },
+    })
 
-        async addPost() {
-            await this.$apollo.mutate({
-                mutation: createPostMutation,
-                variables: {
-                    "title": this.title,
-                    "content": this.content,
-                    "tags": this.tag
-                }
-            })
-            this.postCard = false,
-                this.title = null
-            this.content = null
-            this.tags = null
+    return response.data
+}
 
-            await this.$router.push("/graphql/post-list")
+const { mutate: deletePost } = useMutation({
+    mutationFn: deletePostFunction,
+    onSuccess: async () => {
+        queryClient.invalidateQueries("graphqlAllPosts")
+    },
+    onError: async (error) => {
+        Notify.create({
+            message: error.message,
+            type: "negative",
+            actions: [
+                { icon: 'close', color: 'white', round: true, }
+            ]
+        })
+    },
+})
 
-            Notify.create({
-                message: 'Post Added Successfully',
-                type: 'positive',
-                actions: [
-                    { label: 'Refresh', color: 'white', handler: () => { this.refreshPage() } },
-                    { label: 'Dismiss', color: 'white' }
-                ]
-            })
+function confirmDeletePost(id) {
+    Dialog.create({
+        title: 'Confirm',
+        message: 'Are you sure you want to delete this post?',
+        cancel: true,
+        persistent: true
+    }).onOk(() => {
+        deletePost(id)
+        Notify.create({
+            message: 'Post Deleted Successfully',
+            type: 'positive',
+            actions: [
+                { label: 'Dismiss', color: 'white' }
+            ]
+        })
+    }).onCancel(() => {
+        return
+    })
+}
+
+async function favoritePostFunction(id) {
+    const response = await axiosGraphQL({
+        method: 'post',
+        data: {
+            query: addPostToUserFavoritesMutation,
+            variables: {
+                "id": parseInt(id),
+            }
         },
+    })
 
-        onReset() {
-            this.title = null
-            this.content = null
-            this.tags = null
-        },
+    return response.data
+}
 
-        confirmDeletePost(id) {
-            Dialog.create({
-                title: 'Confirm',
-                message: 'Are you sure you want to delete this post?',
-                cancel: true,
-                persistent: true
-            }).onOk(() => {
-                this.deletePost(id)
-                this.$router.push('/graphql/post-list')
-                Notify.create({
-                    message: 'Post Deleted Successfully',
-                    type: 'positive',
-                    actions: [
-                        { label: 'Refresh', color: 'white', handler: () => { this.refreshPage() } },
-                        { label: 'Dismiss', color: 'white' }
-                    ]
-                })
-            }).onCancel(() => {
-                return
-            }).onDismiss(() => {
-                return
-            })
-        },
+const { mutate: favoritePost } = useMutation({
+    mutationFn: favoritePostFunction,
+    onSuccess: async () => {
+        queryClient.invalidateQueries("graphqlAllPosts")
+        Notify.create({
+            message: 'Added Post to your Favorites Successfully',
+            type: 'positive',
+            actions: [
+                { label: 'Dismiss', color: 'white' }
+            ]
+        })
 
-        confirmDeleteComment(id) {
-            Dialog.create({
-                title: 'Confirm',
-                message: 'Are you sure you want to delete this comment?',
-                cancel: true,
-                persistent: true
-            }).onOk(() => {
-                this.deleteComment(id)
-                this.$router.push('/graphql/post-list')
-                Notify.create({
-                    message: 'Post Deleted Successfully',
-                    type: 'positive',
-                    actions: [
-                        { label: 'Refresh', color: 'white', handler: () => { this.refreshPage() } },
-                        { label: 'Dismiss', color: 'white' }
-                    ]
-                })
-            }).onCancel(() => {
-                return
-            }).onDismiss(() => {
-                return
-            })
-        },
+    },
+    onError: async (error) => {
+        Notify.create({
+            message: error.message,
+            type: "negative",
+            actions: [
+                { icon: 'close', color: 'white', round: true, }
+            ]
+        })
+    },
+})
 
-        confirmRemovePostFromFavorites(id) {
-            Dialog.create({
-                title: 'Confirm',
-                message: 'Are you sure you want to remove this post from your favorites list?',
-                cancel: true,
-                persistent: true
-            }).onOk(() => {
-                this.removePostFromFavorites(id)
-                this.$router.push('/graphql/post-list')
-                Notify.create({
-                    message: 'Post Deleted Successfully',
-                    type: 'positive',
-                    actions: [
-                        { label: 'Refresh', color: 'white', handler: () => { this.refreshPage() } },
-                        { label: 'Dismiss', color: 'white' }
-                    ]
-                })
-            }).onCancel(() => {
-                return
-            }).onDismiss(() => {
-                return
-            })
+async function unfavoritePostFunction(id) {
+    const response = await axiosGraphQL({
+        method: 'post',
+        data: {
+            query: addPostToUserFavoritesMutation,
+            variables: {
+                "id": parseInt(id),
+            }
         },
+    })
 
-        async deletePost(id) {
-            await this.$apollo.mutate({
-                mutation: deletePostMutation,
-                variables: {
-                    // https://stackoverflow.com/questions/73172384/variable-id-got-invalid-value-1-int-cannot-represent-non-integer-value-1
-                    id: parseInt(id),
-                }
-            })
-        },
+    return response.data
+}
 
-        async addPostToUserFavorites(id) {
-            await this.$apollo.mutate({
-                mutation: addPostToUserFavoritesMutation,
-                variables: {
-                    // https://stackoverflow.com/questions/73172384/variable-id-got-invalid-value-1-int-cannot-represent-non-integer-value-1
-                    id: parseInt(id),
-                }
-            })
-            Notify.create({
-                message: 'Added Post to your Favorites Successfully',
-                type: 'positive',
-                actions: [
-                    { label: 'Refresh', color: 'white', handler: () => { this.refreshPage() } },
-                    { label: 'Dismiss', color: 'white' }
-                ]
-            })
-        },
+const { mutate: unfavoritePost } = useMutation({
+    mutationFn: unfavoritePostFunction,
+    onSuccess: async () => {
+        queryClient.invalidateQueries("graphqlAllPosts")
+    },
+    onError: async (error) => {
+        Notify.create({
+            message: error.message,
+            type: "negative",
+            actions: [
+                { icon: 'close', color: 'white', round: true, }
+            ]
+        })
+    },
+})
 
-        async deleteComment(id) {
-            await this.$apollo.mutate({
-                mutation: deleteCommentMutation,
-                variables: {
-                    // https://stackoverflow.com/questions/73172384/variable-id-got-invalid-value-1-int-cannot-represent-non-integer-value-1
-                    id: parseInt(id),
-                }
-            })
-        },
+function confirmRemovePostFromFavorites(id) {
+    Dialog.create({
+        title: 'Confirm',
+        message: 'Are you sure you want to remove this post from your favorites list?',
+        cancel: true,
+        persistent: true
+    }).onOk(() => {
+        unfavoritePost(id)
+        Notify.create({
+            message: 'Post removed from favorites Successfully',
+            type: 'positive',
+            actions: [
+                { label: 'Dismiss', color: 'white' }
+            ]
+        })
+    }).onCancel(() => {
+        return
+    })
+}
 
-        async removePostFromFavorites(id) {
-            await this.$apollo.mutate({
-                mutation: addPostToUserFavoritesMutation,
-                variables: {
-                    // https://stackoverflow.com/questions/73172384/variable-id-got-invalid-value-1-int-cannot-represent-non-integer-value-1
-                    id: parseInt(id),
-                }
-            })
+async function likePostFunction(id) {
+    const response = await axiosGraphQL({
+        method: 'post',
+        data: {
+            query: likePostMutation,
+            variables: {
+                "id": parseInt(id),
+            }
         },
+    })
 
-        async handleLikePost(id) {
-            await this.$apollo.mutate({
-                mutation: likePostMutation,
-                variables: {
-                    id: parseInt(id),
-                }
-            })
-            Notify.create({
-                message: 'Liked Post',
-                type: 'positive',
-                actions: [
-                    { label: 'Refresh', color: 'white', handler: () => { this.refreshPage() } },
-                    { label: 'Dismiss', color: 'white' }
-                ]
-            })
+    return response.data
+}
+
+const { mutate: likePost } = useMutation({
+    mutationFn: likePostFunction,
+    onSuccess: async () => {
+        queryClient.invalidateQueries("graphqlAllPosts")
+        Notify.create({
+            message: 'Liked Post',
+            type: 'positive',
+            actions: [
+                { label: 'Dismiss', color: 'white' }
+            ]
+        })
+    },
+    onError: async (error) => {
+        Notify.create({
+            message: error.message,
+            type: "negative",
+            actions: [
+                { icon: 'close', color: 'white', round: true, }
+            ]
+        })
+    },
+})
+
+async function unlikePostFunction(id) {
+    const response = await axiosGraphQL({
+        method: 'post',
+        data: {
+            query: likePostMutation,
+            variables: {
+                "id": parseInt(id),
+            }
         },
-        async unlikePost(id) {
-            await this.$apollo.mutate({
-                mutation: likePostMutation,
-                variables: {
-                    id: parseInt(id),
-                }
-            })
-            Notify.create({
-                message: 'unliked Post',
-                type: 'positive',
-                actions: [
-                    { label: 'Refresh', color: 'white', handler: () => { this.refreshPage() } },
-                    { label: 'Dismiss', color: 'white' }
-                ]
-            })
-        },
-    }
+    })
+
+    return response.data
+}
+
+const { mutate: unlikePost } = useMutation({
+    mutationFn: unlikePostFunction,
+    onSuccess: async () => {
+        queryClient.invalidateQueries("graphqlAllPosts")
+        Notify.create({
+            message: 'unLiked Post',
+            type: 'positive',
+            actions: [
+                { label: 'Dismiss', color: 'white' }
+            ]
+        })
+    },
+    onError: async (error) => {
+        Notify.create({
+            message: error.message,
+            type: "negative",
+            actions: [
+                { icon: 'close', color: 'white', round: true, }
+            ]
+        })
+    },
+})
+
+
+
+function handleSubmit() {
+    mutate({
+        title: title.value,
+        content: content.value,
+        tags: tags.value,
+    })
+    postCard.value = false;
+}
+
+function onReset() {
+    title.value = null
+    content.value = null
+    tags.value = null
 }
 </script>
 
 <template>
     <main class="q-mt-sm flex flex-center">
-        <span v-if="$apollo.loading">Loading...</span>
-        <span v-else-if="$apollo.error">Error: {{ error.message }} Try <q-btn size="sm" color="primary"
-                @click="refreshPage">
+        <span v-if="isLoading">Loading...</span>
+        <span v-else-if="isError">Error: {{ error.message }} Try <q-btn size="sm" color="primary" @click="refreshPage">
                 Reloading</q-btn> the page</span>
         <!-- We can assume by this point that `isSuccess === true` -->
-        <span v-else-if="allPosts.length == 0">No Posts available Try <q-btn size="sm" color="primary" @click="refreshPage">
+        <!-- <span v-else-if="allPosts.length == 0">No Posts available Try <q-btn size="sm" color="primary"
+                @click="refreshPage">
                 Reloading</q-btn> the page
-            or click on the plus sign to add a new note</span>
+            or click on the plus sign to add a new post</span> -->
         <div v-else class="q-mt-lg">
-            <q-card v-for="post in allPosts.data.allPosts" :key="post.id" class="my-card q-mt-md" flat bordered>
+            <q-card v-for="post in data.data.allPosts" :key="post.id" class="my-card q-mt-md" flat bordered>
                 <q-item>
                     <!-- <q-item-section avatar>
                         <q-avatar>
@@ -327,10 +386,10 @@ export default {
 
                 <q-card-actions v-if="authStore.$state.isAuthenticated" vertical>
                     <q-btn size="sm" flat icon="event">
-                        Published At: {{ format_date(post.publishedAt) }}
+                        Published At: {{ date.formatDate(post.publishedAt) }}
                     </q-btn>
                     <q-btn size="sm" flat icon="event">
-                        Last Updated: {{ format_date(post.updatedAt) }}
+                        Last Updated: {{ date.formatDate(post.updatedAt) }}
                     </q-btn>
                 </q-card-actions>
 
@@ -344,9 +403,9 @@ export default {
                     <q-btn color="info" flat @click="confirmDeletePost(post.id)">Delete</q-btn>
                     <q-btn v-if="post.favorites.length > 0" color="info" flat
                         @click="confirmRemovePostFromFavorites(post.id)">Remove from favorites</q-btn>
-                    <q-btn v-else color="info" flat @click="addPostToUserFavorites(post.id)">Add to favorites</q-btn>
+                    <q-btn v-else color="info" flat @click="favoritePost(post.id)">Add to favorites</q-btn>
                     <q-btn v-if="post.likes.length > 0" color="info" flat @click="unlikePost(post.id)">Unlike</q-btn>
-                    <q-btn v-else color="info" flat @click="handleLikePost(post.id)">Like</q-btn>
+                    <q-btn v-else color="info" flat @click="likePost(post.id)">Like</q-btn>
                 </q-card-actions>
 
                 <q-separator />
@@ -388,7 +447,7 @@ export default {
 
 
                     <q-card-section>
-                        <q-form @submit.prevent="addPost" @reset="onReset">
+                        <q-form @submit.prevent="handleSubmit" @reset="onReset">
                             <q-input filled v-model.lazy.trim="title" label="Post Title" required lazy-rules
                                 :rules="[val => val && val.length > 0 || 'Post Title is required']" />
 
@@ -398,15 +457,12 @@ export default {
                             <label>Post Tags</label>
                             <!-- https://github.com/shentao/vue-multiselect/issues/133#issuecomment-1652845391 -->
                             <multiselect v-model="tag" :multiple="true"
-                                :custom-label="opt => tags.find(e => e.id === opt).name"
-                                deselect-label="You must select at least one tag" :options="tags.map(i => i.id)"
-                                :searchable="true" :allow-empty="false">
+                                :custom-label="opt => tags.data.allTags.find(e => e.id === opt).name"
+                                deselect-label="You must select at least one tag"
+                                :options="tags.data.allTags.map(tag => tag.id)" :searchable="true" :allow-empty="false">
                                 <template slot="singleLabel" slot-scope="{ tag }"><strong>{{ tag.name
-                                }}</strong></template>
+                                        }}</strong></template>
                             </multiselect>
-                            <!-- <select v-model="tags" multiple>
-                                <option v-for="tag in data" id="tag.id" :value="tag.id">{{ tag.name }}</option>
-                            </select> -->
                             <div class="q-pa-sm q-mt-md">
                                 <q-btn label="Add Post" type="submit" color="primary" />
                                 <q-btn label="Reset" type="reset" class="bg-grey-8 text-white q-ml-sm" />

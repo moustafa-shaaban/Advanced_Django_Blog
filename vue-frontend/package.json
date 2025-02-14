@@ -12,6 +12,7 @@
     "@apollo/client": "^3.12.11",
     "@quasar/extras": "^1.16.9",
     "@tanstack/vue-query": "^5.17.9",
+    "@urql/vue": "^1.4.2",
     "@vue/apollo-components": "^4.0.0-beta.12",
     "@vue/apollo-composable": "^4.2.1",
     "@vue/apollo-option": "^4.0.0-beta.12",
