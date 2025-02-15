@@ -4,6 +4,9 @@ import axios from 'axios';
 import { useQueryClient, useQuery, useMutation } from '@tanstack/vue-query';
 import { Notify, Cookies } from 'quasar';
 import { useRouter } from 'vue-router';
+import { axiosGraphQL } from '@/api/axios';
+import { getAllTags } from '@/graphqlQueries';
+import { createTagMutation } from '@/graphqlMutations';
 
 
 const queryClient = useQueryClient();
@@ -12,65 +15,32 @@ const name = ref('');
 const tagCard = ref(false);
 
 async function getTags() {
-    const response = await axios({
-        url: import.meta.env.VITE_GraphQL_URL,
+    const response = await axiosGraphQL({
         method: 'post',
-        withCredentials: true,
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': Cookies.get('csrftoken')
-        },
         data: {
-            query: `
-                query getAllTags {
-                    allTags {
-                        id
-                        name
-                        slug
-                    }
-                }
-            `
+            query: getAllTags
         }
     });
 
     return response.data;
 };
 
-const { data: tagsData, error, isPending, isLoading, isError } = useQuery({
+const { data: tagsData, error, isLoading, isError } = useQuery({
     queryKey: ['graphqlTagsList'],
     queryFn: getTags
 })
 
 async function addTag() {
-    const response = await axios({
-        url: import.meta.env.VITE_GraphQL_URL,
+    const response = await axiosGraphQL({
         method: 'post',
-        withCredentials: true,
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': Cookies.get('csrftoken')
-        },
         data: {
-            query: `
-                mutation createTag($name: String!) {
-                    createTag(input: {name: $name}) {
-                        errors {
-                            messages
-                            field
-                        }
-                        tag {
-                            id
-                            name
-                        }
-                    }
-                }
-                `,
-                variables: {
-                    name: name.value
-                }
+            query: createTagMutation,
+            variables: {
+                name: name.value
+            }
         }
     });
-    
+
     return response.data;
 };
 
@@ -113,7 +83,7 @@ function onReset() {
 
 <template>
     <q-page class="q-mt-sm flex flex-center">
-        <span v-if="isPending">Loading...</span>
+        <span v-if="isLoading">Loading...</span>
         <span v-else-if="isError">Error: {{ error.message }}</span>
         <!-- We can assume by this point that `isSuccess === true` -->
         <span v-else-if="tagsData.length == 0">No posts found</span>

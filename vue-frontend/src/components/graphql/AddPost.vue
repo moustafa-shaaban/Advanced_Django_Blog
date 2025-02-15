@@ -4,6 +4,7 @@ import { createPostMutation } from "@/graphqlMutations";
 import Multiselect from 'vue-multiselect'
 
 import { getAllTags, axiosAPI } from '../../api/axios';
+import gql from "graphql-tag";
 
 
 export default {
@@ -40,7 +41,20 @@ export default {
 
         addPost() {
             this.$apollo.mutate({
-                mutation: createPostMutation,
+                mutation: gql`
+                    mutation CreatePost($title: String, $content: String, $tags: [Int]!) {
+                        createPost(input: {title: $title, content: $content, tags: $tags}) {
+                            post {
+                                id
+                                title
+                                content
+                                tag {
+                                    name
+                                }
+                            }
+                        }
+                    }
+                `,
                 variables: {
                     "title": this.title,
                     "content": this.content,
@@ -89,8 +103,8 @@ export default {
                     <label>Post Tags</label>
                     <!-- https://github.com/shentao/vue-multiselect/issues/133#issuecomment-1652845391 -->
                     <multiselect v-model="tag" :multiple="true" :custom-label="opt => tags.find(e => e.id === opt).name"
-                        deselect-label="You must select at least one tag" :options="tags.map(i => i.id)" :searchable="true"
-                        :allow-empty="false">
+                        deselect-label="You must select at least one tag" :options="tags.map(i => i.id)"
+                        :searchable="true" :allow-empty="false">
                         <template slot="singleLabel" slot-scope="{ tag }"><strong>{{ tag.name }}</strong></template>
                     </multiselect>
                     <!-- <select v-model="tags" multiple>
