@@ -74,6 +74,8 @@ const { data: tags } = useQuery({
 })
 
 async function addPost() {
+
+
     const response = await axiosGraphQL({
         method: 'post',
         data: {
@@ -81,10 +83,13 @@ async function addPost() {
             variables: {
                 "title": title.value,
                 "content": content.value,
-                "tags": parseInt(tag.value)
+                // Source: https://www.geeksforgeeks.org/how-to-convert-array-of-strings-to-array-of-numbers-in-javascript/
+                "tags": tag.value.map(Number)
             }
         },
     })
+
+    console.log(tag.value)
 
     return response.data
 }
