@@ -1,52 +1,61 @@
-<script>
+<script setup>
+import { ref } from "vue";
 import { Notify } from "quasar";
+import { useRouter } from 'vue-router';
 import { createTagMutation } from "@/graphqlMutations";
+import { useQueryClient, useQuery, useMutation } from '@tanstack/vue-query';
+import { axiosGraphQL } from "@/api/axios";
+const router = useRouter()
+const queryClient = useQueryClient();
+const name = ref("");
 
-
-export default {
-    name: "GraphQLAddTag",
-    data() {
-        return {
-            name: "",
-        }
-    },
-    methods: {
-        refreshPage() {
-            window.location.reload();
-        },
-        addTag() {
-            try {
-                this.$apollo.mutate({
-                    mutation: createTagMutation,
-                    variables: {
-                        "name": this.name,
-                    }
-                })
-                this.$router.push({name: "graphql-tags"})
-                Notify.create({
-                    message: 'Tag Created Successfully',
-                    type: 'positive',
-                    actions: [
-                        { label: 'Refresh', color: 'white', handler: () => { this.refreshPage() } },
-                        { icon: 'close', color: 'white', round: true, },
-                    ]
-                })
-            } catch (error) {
-                Notify.create({
-                    message: error.message,
-                    type: 'negative',
-                    actions: [
-                        { icon: 'close', color: 'white', round: true, },
-                    ]
-                })
+async function createTag() {
+    const response = await axiosGraphQL({
+        method: 'post',
+        data: {
+            query: createTagMutation,
+            variables: {
+                "name": name.value,
             }
         },
-        onReset() {
-            this.name = null
-        }
-    }
+    })
+
+    return response.data
 }
 
+const { mutate } = useMutation({
+    mutationFn: createTag,
+    onSuccess: async () => {
+        queryClient.invalidateQueries("graphqlAllTags")
+        await router.push('/graphql/tags')
+        Notify.create({
+            message: 'Tag Added Successfully',
+            type: "positive",
+            actions: [
+                { icon: 'close', color: 'white', round: true, }
+            ]
+        })
+    },
+    onError: async (error) => {
+        Notify.create({
+            message: error.message,
+            type: "negative",
+            actions: [
+                { icon: 'close', color: 'white', round: true, }
+            ]
+        })
+    },
+})
+
+function handleSubmit() {
+    mutate({
+        name: name.value,
+    })
+}
+
+function onReset() {
+    name.value = null
+}
 </script>
 
 <template>
@@ -55,13 +64,13 @@ export default {
             <q-card-section>
                 <div class="row items-center no-wrap">
                     <div class="col">
-                        <div class="text-h6">Add Post</div>
+                        <div class="text-h6">Add Tag</div>
                     </div>
                 </div>
             </q-card-section>
 
             <q-card-section>
-                <q-form @submit.prevent="addTag" @reset="onReset">
+                <q-form @submit.prevent="handleSubmit" @reset="onReset">
                     <q-input filled v-model.lazy.trim="name" label="Tag name" required lazy-rules
                         :rules="[val => val && val.length > 0 || 'Tag name is required']" />
                     <div class="q-pa-sm q-mt-md">

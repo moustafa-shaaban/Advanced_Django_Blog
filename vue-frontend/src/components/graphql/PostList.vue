@@ -31,18 +31,6 @@ async function getPosts() {
 }
 
 
-
-async function getTags() {
-    const response = await axiosGraphQL({
-        method: 'post',
-        data: {
-            query: getAllTags
-        }
-    })
-
-    return response.data
-}
-
 const { data, error, isLoading, isError } = useQuery({
     queryKey: ['graphqlAllPosts'],
     queryFn: getPosts,
@@ -57,6 +45,17 @@ const { data, error, isLoading, isError } = useQuery({
     }
 })
 
+
+async function getTags() {
+    const response = await axiosGraphQL({
+        method: 'post',
+        data: {
+            query: getAllTags
+        }
+    })
+
+    return response.data
+}
 
 
 const { data: tags } = useQuery({
@@ -73,9 +72,9 @@ const { data: tags } = useQuery({
     }
 })
 
+
+
 async function addPost() {
-
-
     const response = await axiosGraphQL({
         method: 'post',
         data: {
@@ -88,8 +87,6 @@ async function addPost() {
             }
         },
     })
-
-    console.log(tag.value)
 
     return response.data
 }
@@ -336,7 +333,7 @@ function handleSubmit() {
     mutate({
         title: title.value,
         content: content.value,
-        tags: tags.value,
+        tags: tag.value,
     })
     postCard.value = false;
 }
@@ -351,13 +348,7 @@ function onReset() {
 <template>
     <main class="q-mt-sm flex flex-center">
         <span v-if="isLoading">Loading...</span>
-        <span v-else-if="isError">Error: {{ error.message }} Try <q-btn size="sm" color="primary" @click="refreshPage">
-                Reloading</q-btn> the page</span>
-        <!-- We can assume by this point that `isSuccess === true` -->
-        <!-- <span v-else-if="allPosts.length == 0">No Posts available Try <q-btn size="sm" color="primary"
-                @click="refreshPage">
-                Reloading</q-btn> the page
-            or click on the plus sign to add a new post</span> -->
+        <span v-else-if="isError">Error: {{ error.message }}</span>
         <div v-else class="q-mt-lg">
             <q-card v-for="post in data.data.allPosts" :key="post.id" class="my-card q-mt-md" flat bordered>
                 <q-item>
@@ -466,7 +457,7 @@ function onReset() {
                                 deselect-label="You must select at least one tag"
                                 :options="tags.data.allTags.map(tag => tag.id)" :searchable="true" :allow-empty="false">
                                 <template slot="singleLabel" slot-scope="{ tag }"><strong>{{ tag.name
-                                        }}</strong></template>
+                                }}</strong></template>
                             </multiselect>
                             <div class="q-pa-sm q-mt-md">
                                 <q-btn label="Add Post" type="submit" color="primary" />
