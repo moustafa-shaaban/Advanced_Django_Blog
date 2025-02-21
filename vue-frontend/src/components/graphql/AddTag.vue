@@ -3,7 +3,7 @@ import { ref } from "vue";
 import { Notify } from "quasar";
 import { useRouter } from 'vue-router';
 import { createTagMutation } from "@/graphqlMutations";
-import { useQueryClient, useQuery, useMutation } from '@tanstack/vue-query';
+import { useQueryClient, useMutation } from '@tanstack/vue-query';
 import { axiosGraphQL } from "@/api/axios";
 const router = useRouter()
 const queryClient = useQueryClient();
