@@ -1,3 +1,100 @@
+<script setup>
+import { ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { Notify } from 'quasar';
+import { useQuery, useMutation } from '@tanstack/vue-query';
+import Multiselect from 'vue-multiselect';
+
+import { getPostBySlug } from '@/graphqlQueries';
+import { updatePostMutation } from '@/graphqlMutations';
+import { axiosGraphQL } from '@/api/axios';
+
+const route = useRoute();
+const router = useRouter();
+const postData = ref("");
+
+async function getPost() {
+    const response = await axiosGraphQL({
+        method: 'post',
+        data: {
+            query: getPostBySlug,
+            variables: {
+                id: parseInt(route.params.slug)
+            },
+        }
+    })
+
+    // Make a copy of the returned data because the data saved in the cache is read-only
+    postData.value = { ...response.data.data.postBySlug }
+    return response.data
+}
+
+const { data, error, isLoading, isError } = useQuery({
+    queryKey: ['graphqlGetPost'],
+    queryFn: getPost,
+    onError: async (error) => {
+        Notify.create({
+            message: error.message,
+            color: "negative",
+            actions: [
+                { icon: 'close', color: 'white', round: true, }
+            ]
+        })
+    },
+
+})
+
+async function updatePost() {
+    const response = await axiosGraphQL({
+        method: 'post',
+        data: {
+            query: updatePostMutation,
+            variables: {
+                "id": parseInt(postData.value.slug),
+                "title": postData.value.title,
+                "content": postData.value.content,
+                "tags": postData.value.tag
+            }
+        },
+    })
+
+    return response.data
+}
+
+const { mutate } = useMutation({
+    mutationFn: updateComment,
+    onSuccess: async () => {
+        await router.push('/graphql/post-list')
+        Notify.create({
+            message: 'Post Updated Successfully',
+            type: "positive",
+            actions: [
+                { icon: 'close', color: 'white', round: true, }
+            ]
+        })
+    },
+    onError: async (error) => {
+        Notify.create({
+            message: error.message,
+            type: "negative",
+            actions: [
+                { icon: 'close', color: 'white', round: true, }
+            ]
+        })
+    },
+})
+
+function handleSubmit() {
+    mutate({
+        post: postData.value,
+    })
+}
+
+
+
+
+</script>
+
 <script>
 import { Notify } from 'quasar'
 import Multiselect from 'vue-multiselect'
@@ -74,22 +171,22 @@ export default {
         async addComment() {
             try {
                 await this.$apollo.mutate({
-                mutation: createCommentMutation,
-                variables: {
-                    // https://stackoverflow.com/questions/73172384/variable-id-got-invalid-value-1-int-cannot-represent-non-integer-value-1
-                    slug: this.$route.params.slug,
-                    comment: this.comment
-                }
-            })
-            this.commentCard = false;
-            this.$router.push("/graphql/post-list")
-            Notify.create({
-                message: 'Thank ypu for commenting, your comment is waiting admin approval',
-                type: "positive",
-                actions: [
-                    { icon: 'close', color: 'white', round: true, }
-                ]
-            })
+                    mutation: createCommentMutation,
+                    variables: {
+                        // https://stackoverflow.com/questions/73172384/variable-id-got-invalid-value-1-int-cannot-represent-non-integer-value-1
+                        slug: this.$route.params.slug,
+                        comment: this.comment
+                    }
+                })
+                this.commentCard = false;
+                this.$router.push("/graphql/post-list")
+                Notify.create({
+                    message: 'Thank ypu for commenting, your comment is waiting admin approval',
+                    type: "positive",
+                    actions: [
+                        { icon: 'close', color: 'white', round: true, }
+                    ]
+                })
             } catch (error) {
                 Notify.create({
                     message: error.message,
