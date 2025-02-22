@@ -1,7 +1,6 @@
 <script setup>
 import { ref } from 'vue';
 import { Notify } from 'quasar';
-import { useRouter } from 'vue-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
 
 import { getAllTags, createTag } from '@/api/axios';
@@ -10,7 +9,6 @@ import { getAllTags, createTag } from '@/api/axios';
 const name = ref('');
 const tagCard = ref(false);
 
-const router = useRouter();
 const queryClient = useQueryClient();
 
 const { data: tagsData, error, isError, isPending } = useQuery({
@@ -22,7 +20,7 @@ const { mutate } = useMutation({
     mutationFn: createTag,
     onSuccess: async () => {
         queryClient.invalidateQueries("allTagsQuery")
-        await router.push('/tags')
+        tagCard.value = false
         Notify.create({
             message: 'Tag Added Successfully',
             type: "positive",
@@ -73,26 +71,26 @@ function onReset() {
         </div>
 
         <q-dialog v-model="tagCard">
-                <q-card flat bordered class="my-card">
-                    <q-card-section class="row items-center q-pb-none">
-                        <div class="text-h6">Add Tag</div>
-                        <q-space />
-                        <q-btn icon="close" flat round dense v-close-popup />
-                    </q-card-section>
+            <q-card flat bordered class="my-card">
+                <q-card-section class="row items-center q-pb-none">
+                    <div class="text-h6">Add Tag</div>
+                    <q-space />
+                    <q-btn icon="close" flat round dense v-close-popup />
+                </q-card-section>
 
 
-                    <q-card-section>
-                        <q-form @submit.prevent="addTag" @reset="onReset">
-                            <q-input filled v-model.lazy.trim="name" label="Tag Name" required lazy-rules
-                                :rules="[val => val && val.length > 0 || 'Tag Name is required']" />
-                            <div class="q-pa-sm q-mt-md">
-                                <q-btn label="Add Tag" type="submit" color="primary" />
-                                <q-btn label="Reset" type="reset" class="bg-grey-8 text-white q-ml-sm" />
-                            </div>
-                        </q-form>
-                    </q-card-section>
-                </q-card>
-            </q-dialog>
+                <q-card-section>
+                    <q-form @submit.prevent="addTag" @reset="onReset">
+                        <q-input filled v-model.lazy.trim="name" label="Tag Name" required lazy-rules
+                            :rules="[val => val && val.length > 0 || 'Tag Name is required']" />
+                        <div class="q-pa-sm q-mt-md">
+                            <q-btn label="Add Tag" type="submit" color="primary" />
+                            <q-btn label="Reset" type="reset" class="bg-grey-8 text-white q-ml-sm" />
+                        </div>
+                    </q-form>
+                </q-card-section>
+            </q-card>
+        </q-dialog>
 
         <q-page-sticky position="bottom-right" :offset="[18, 18]">
             <q-btn fab icon="add" color="primary" @click="tagCard = true">

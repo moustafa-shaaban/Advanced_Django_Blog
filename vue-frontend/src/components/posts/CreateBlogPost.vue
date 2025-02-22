@@ -20,21 +20,7 @@ onMounted(async () => {
     tags.value = await getAllTags();
 });
 
-// const { isFetching, data: tags, tagsError } = useQuery({
-//     queryKey: ['tags'],
-//     queryFn: getAllTags,
-//     onError: async (error) => {
-//         $q.notify({
-//             message: error.message,
-//             color: "negative",
-//             actions: [
-//                 { icon: 'close', color: 'white', round: true, }
-//             ]
-//         })
-//     }
-// })
-
-const { isPending, isError, error, isSuccess, mutate, reset } = useMutation({
+const { isPending, mutate } = useMutation({
     mutationFn: createPost,
     onSuccess: async () => {
         queryClient.invalidateQueries("allBlogPosts")
@@ -98,8 +84,8 @@ function onReset() {
                     <label>Post Tags</label>
                     <!-- https://github.com/shentao/vue-multiselect/issues/133#issuecomment-1652845391 -->
                     <multiselect v-model="tag" :multiple="true" :custom-label="opt => tags.find(e => e.id === opt).name"
-                        deselect-label="You must select at least one tag" :options="tags.map(i => i.id)" :searchable="true"
-                        :allow-empty="false">
+                        deselect-label="You must select at least one tag" :options="tags.map(i => i.id)"
+                        :searchable="true" :allow-empty="false">
                         <template slot="singleLabel" slot-scope="{ tag }"><strong>{{ tag.name }}</strong></template>
                     </multiselect>
                     <!-- <select v-model="tag" multiple>

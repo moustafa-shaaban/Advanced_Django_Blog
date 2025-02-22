@@ -1,42 +1,21 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useQuasar } from 'quasar'
+import { ref } from 'vue';
+import { Notify } from 'quasar'
 import { useRouter } from 'vue-router';
-import { useMutation, useQueryClient, useQuery } from '@tanstack/vue-query'
-import { createTag, getAllTags } from '../../api/axios';
-
-const name = ref('')
-
-
-const queryClient = useQueryClient();
+import { useMutation } from '@tanstack/vue-query'
+import { createTag } from '../../api/axios';
 
 const router = useRouter();
-const $q = useQuasar();
 
-onMounted(async () => {
-    tags.value = await getAllTags();
-});
+const name = ref('');
 
-const { isFetching, data, tagsError } = useQuery({
-    queryKey: ['tags'],
-    queryFn: getAllTags,
-    onError: async (error) => {
-        $q.notify({
-            message: error.message,
-            color: "negative",
-            actions: [
-                { icon: 'close', color: 'white', round: true, }
-            ]
-        })
-    }
-})
 
-const { isPending, isError, error, isSuccess, mutate, reset } = useMutation({
+const { isPending, mutate } = useMutation({
     mutationFn: createTag,
     onSuccess: async () => {
-        queryClient.invalidateQueries("tags")
-        await router.push('/')
-        $q.notify({
+
+        await router.push('/tags')
+        Notify.create({
             message: 'Tag Added Successfully',
             type: "positive",
             actions: [
@@ -45,7 +24,7 @@ const { isPending, isError, error, isSuccess, mutate, reset } = useMutation({
         })
     },
     onError: async (error) => {
-        $q.notify({
+        Notify.create({
             message: error.message,
             color: "negative",
             actions: [
@@ -63,7 +42,6 @@ function handleSubmit() {
 
 function onReset() {
     name.value = null
-    content.value = null
 }
 
 </script>

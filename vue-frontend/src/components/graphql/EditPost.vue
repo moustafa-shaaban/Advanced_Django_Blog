@@ -1,100 +1,3 @@
-<script setup>
-import { ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { Notify } from 'quasar';
-import { useQuery, useMutation } from '@tanstack/vue-query';
-import Multiselect from 'vue-multiselect';
-
-import { getPostBySlug } from '@/graphqlQueries';
-import { updatePostMutation } from '@/graphqlMutations';
-import { axiosGraphQL } from '@/api/axios';
-
-const route = useRoute();
-const router = useRouter();
-const postData = ref("");
-
-async function getPost() {
-    const response = await axiosGraphQL({
-        method: 'post',
-        data: {
-            query: getPostBySlug,
-            variables: {
-                id: parseInt(route.params.slug)
-            },
-        }
-    })
-
-    // Make a copy of the returned data because the data saved in the cache is read-only
-    postData.value = { ...response.data.data.postBySlug }
-    return response.data
-}
-
-const { data, error, isLoading, isError } = useQuery({
-    queryKey: ['graphqlGetPost'],
-    queryFn: getPost,
-    onError: async (error) => {
-        Notify.create({
-            message: error.message,
-            color: "negative",
-            actions: [
-                { icon: 'close', color: 'white', round: true, }
-            ]
-        })
-    },
-
-})
-
-async function updatePost() {
-    const response = await axiosGraphQL({
-        method: 'post',
-        data: {
-            query: updatePostMutation,
-            variables: {
-                "id": parseInt(postData.value.slug),
-                "title": postData.value.title,
-                "content": postData.value.content,
-                "tags": postData.value.tag
-            }
-        },
-    })
-
-    return response.data
-}
-
-const { mutate } = useMutation({
-    mutationFn: updateComment,
-    onSuccess: async () => {
-        await router.push('/graphql/post-list')
-        Notify.create({
-            message: 'Post Updated Successfully',
-            type: "positive",
-            actions: [
-                { icon: 'close', color: 'white', round: true, }
-            ]
-        })
-    },
-    onError: async (error) => {
-        Notify.create({
-            message: error.message,
-            type: "negative",
-            actions: [
-                { icon: 'close', color: 'white', round: true, }
-            ]
-        })
-    },
-})
-
-function handleSubmit() {
-    mutate({
-        post: postData.value,
-    })
-}
-
-
-
-
-</script>
-
 <script>
 import { Notify } from 'quasar'
 import Multiselect from 'vue-multiselect'
@@ -229,8 +132,8 @@ export default {
                     <!-- https://github.com/shentao/vue-multiselect/issues/133#issuecomment-1652845391 -->
                     <multiselect v-model="post.tag" :multiple="true"
                         :custom-label="opt => tags.find(e => e.id === opt).name"
-                        deselect-label="You must select at least one tag" :options="tags.map(i => i.id)" :searchable="true"
-                        :allow-empty="false">
+                        deselect-label="You must select at least one tag" :options="tags.map(i => i.id)"
+                        :searchable="true" :allow-empty="false">
                         <template slot="singleLabel" slot-scope="{ tag }"><strong>{{ tag.name }}</strong></template>
                     </multiselect>
                     <!-- <select v-model="post.tag" multiple>
@@ -257,8 +160,8 @@ export default {
 
                     <q-card-section>
                         <q-form @submit.prevent="addComment(post.id)" @reset="onReset">
-                            <q-input filled v-model.lazy.trim="comment" type="textarea" label="Comment" required lazy-rules
-                                :rules="[val => val && val.length > 0 || 'Comment is required']" />
+                            <q-input filled v-model.lazy.trim="comment" type="textarea" label="Comment" required
+                                lazy-rules :rules="[val => val && val.length > 0 || 'Comment is required']" />
                             <div class="q-pa-sm q-mt-md">
                                 <q-btn label="Add Comment" type="submit" color="primary" />
                                 <q-btn label="Reset" type="reset" class="bg-grey-8 text-white q-ml-sm" />
