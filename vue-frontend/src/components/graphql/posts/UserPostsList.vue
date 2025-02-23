@@ -1,29 +1,27 @@
 <script setup>
 import { useQuery } from '@tanstack/vue-query';
 import { useQuasar, date } from 'quasar';
-
+import { getUserPosts } from '@/graphqlQueries';
 import { useAuthStore } from '@/stores/authStore';
 import { axiosGraphQL } from '@/api/axios';
-import { userFavoritePostsList } from '@/graphqlQueries';
-
-
 
 const authStore = useAuthStore();
+
 const $q = useQuasar();
 // Source: https://stackoverflow.com/a/59778006
 async function getData() {
     const response = await axiosGraphQL({
         method: 'post',
         data: {
-            query: userFavoritePostsList
+            query: getUserPosts
         }
     })
 
     return response.data
 }
 
-const { data, error, isLoading, isError } = useQuery({
-    queryKey: ['userFavoritePostList'],
+const { data, error, isPending, isLoading, isError } = useQuery({
+    queryKey: ['userPostList'],
     queryFn: getData
 })
 
@@ -31,18 +29,18 @@ const { data, error, isLoading, isError } = useQuery({
 
 <template>
     <main class="q-mt-sm flex flex-center">
-        <span v-if="isLoading">Loading...</span>
+        <span v-if="isPending">Loading...</span>
         <span v-else-if="isError">Error: {{ error.message }}</span>
         <!-- We can assume by this point that `isSuccess === true` -->
-        <span v-else-if="data.data.userFavoritePosts.length == 0">You did not add any post to your favorites list</span>
+        <span v-else-if="data.length == 0">No posts found</span>
         <div v-else class="q-mt-lg">
-            <q-card v-for="post in data.data.userFavoritePosts" :key="post.id" class="my-card q-mt-md" flat bordered>
+            <q-card v-for="post in data.data.userPosts" :key="post.id" class="my-card q-mt-md" flat bordered>
                 <q-item>
-                    <!-- <q-item-section avatar>
-            <q-avatar>
-              <img :src="post.author.avatar">
-            </q-avatar>
-          </q-item-section> -->
+                    <q-item-section avatar>
+                        <q-avatar>
+                            <img :src="post.author.avatar" :alt="post.author.username">
+                        </q-avatar>
+                    </q-item-section>
 
                     <q-item-section>
                         <div class="text-h5">{{ post.title }}</div>
@@ -75,7 +73,7 @@ const { data, error, isLoading, isError } = useQuery({
                 <q-separator />
 
                 <q-card-actions v-if="authStore.$state.isAuthenticated">
-                    <router-link :to="{ name: 'edit-post', params: { slug: post.slug } }">
+                    <router-link :to="{ name: 'graphql-update-post', params: { slug: post.slug } }">
                         <q-btn flat color="primary">
                             Detail
                         </q-btn>
@@ -98,8 +96,8 @@ const { data, error, isLoading, isError } = useQuery({
                                     by: {{ comment.user.username }}
                                 </q-item-label>
                                 <q-card-actions v-if="authStore.$state.isAuthenticated">
-                                    <router-link :to="{ name: 'edit-comment', params: { id: comment.id } }">
-                                        <q-btn>
+                                    <router-link :to="{ name: 'graphql-update-comment', params: { id: comment.id } }">
+                                        <q-btn flat color="primary">
                                             Edit
                                         </q-btn>
                                     </router-link>

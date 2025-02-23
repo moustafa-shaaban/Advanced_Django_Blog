@@ -7,7 +7,8 @@
           <q-btn flat icon="menu" @click="drawerLeft = !drawerLeft" />
 
           <q-toolbar-title>
-            <q-breadcrumbs v-if="authStore.$state.isAuthenticated" active-color="$q.dark.isActive > 'white' : 'dark'" style="font-size: 16px">
+            <q-breadcrumbs v-if="authStore.$state.isAuthenticated" active-color="$q.dark.isActive > 'white' : 'dark'"
+              style="font-size: 16px">
               <q-breadcrumbs-el label="Home" icon="home" to="/" />
               <q-breadcrumbs-el :label="username" icon="home" />
 
@@ -18,43 +19,44 @@
 
                     <q-item clickable v-close-popup>
                       <q-item-section>
-                        <q-breadcrumbs-el label="Post List" icon="home" to="/" />
+                        <q-breadcrumbs-el label="Post List" icon="home" :to="{ name: 'posts-list' }" />
                       </q-item-section>
                     </q-item>
 
                     <q-item clickable v-close-popup>
                       <q-item-section>
-                        <q-breadcrumbs-el label="User Post List" icon="notes" :to="{ name: 'user-post-list' }" />
+                        <q-breadcrumbs-el label="User Post List" icon="notes" :to="{ name: 'user-posts-list' }" />
                       </q-item-section>
                     </q-item>
 
                     <q-item clickable v-close-popup>
                       <q-item-section>
-                        <q-breadcrumbs-el label="User Favorite Post List" icon="notes" :to="{ name: 'user-favorite-post-list' }" />
+                        <q-breadcrumbs-el label="User Favorite Post List" icon="notes"
+                          :to="{ name: 'user-favorite-posts-list' }" />
                       </q-item-section>
                     </q-item>
 
                     <q-item clickable v-close-popup>
                       <q-item-section>
-                        <q-breadcrumbs-el label="Search" icon="search" to="/post-search" />
+                        <q-breadcrumbs-el label="Search" icon="search" to="/search-posts" />
                       </q-item-section>
                     </q-item>
 
                     <q-item clickable v-close-popup>
                       <q-item-section>
-                        <q-breadcrumbs-el label="Add Post" icon="notes" :to="{ name: 'add-post' }"  />
+                        <q-breadcrumbs-el label="Add Post" icon="notes" :to="{ name: 'create-post' }" />
                       </q-item-section>
                     </q-item>
 
                     <q-item clickable v-close-popup>
                       <q-item-section>
-                        <q-breadcrumbs-el label="Tags List" icon="notes" to="/tags"  />
+                        <q-breadcrumbs-el label="Tags List" icon="notes" to="/tags" />
                       </q-item-section>
                     </q-item>
 
                     <q-item clickable v-close-popup>
                       <q-item-section>
-                        <q-breadcrumbs-el label="Add Tag" icon="notes" :to="{ name: 'add-tag' }"  />
+                        <q-breadcrumbs-el label="Add Tag" icon="notes" :to="{ name: 'create-tag' }" />
                       </q-item-section>
                     </q-item>
 
@@ -69,43 +71,45 @@
                   <q-list>
                     <q-item clickable v-close-popup>
                       <q-item-section>
-                        <q-breadcrumbs-el label="GraphQL Post List" icon="notes" to="/graphql/post-list/"  />
+                        <q-breadcrumbs-el label="GraphQL Post List" icon="notes" to="/graphql/posts-list/" />
                       </q-item-section>
                     </q-item>
 
                     <q-item clickable v-close-popup>
                       <q-item-section>
-                        <q-breadcrumbs-el label="User Post List" icon="notes" :to="{ name: 'graphql-user-post-list' }" />
+                        <q-breadcrumbs-el label="User Post List" icon="notes"
+                          :to="{ name: 'graphql-user-posts-list' }" />
                       </q-item-section>
                     </q-item>
 
                     <q-item clickable v-close-popup>
                       <q-item-section>
-                        <q-breadcrumbs-el label="User Favorite Post List" icon="notes" :to="{ name: 'graphql-user-favorite-post-list' }" />
+                        <q-breadcrumbs-el label="User Favorite Post List" icon="notes"
+                          :to="{ name: 'graphql-user-favorite-posts-list' }" />
                       </q-item-section>
                     </q-item>
 
                     <q-item clickable v-close-popup>
                       <q-item-section>
-                        <q-breadcrumbs-el label="GraphQL Search" icon="search" to="/graphql-search" />
+                        <q-breadcrumbs-el label="GraphQL Search" icon="search" :to="{ name: 'graphql-search-posts' }" />
                       </q-item-section>
                     </q-item>
 
                     <q-item clickable v-close-popup>
                       <q-item-section>
-                        <q-breadcrumbs-el label="Add Post" icon="notes" :to="{ name: 'graphql-add-post' }"  />
+                        <q-breadcrumbs-el label="Add Post" icon="notes" :to="{ name: 'graphql-create-post' }" />
                       </q-item-section>
                     </q-item>
 
                     <q-item clickable v-close-popup>
                       <q-item-section>
-                        <q-breadcrumbs-el label="Tags List" icon="notes" to="/graphql/tags"  />
+                        <q-breadcrumbs-el label="Tags List" icon="notes" to="/graphql/tags" />
                       </q-item-section>
                     </q-item>
 
                     <q-item clickable v-close-popup>
                       <q-item-section>
-                        <q-breadcrumbs-el label="Add Tag" icon="notes" :to="{ name: 'graphql-add-tag' }"  />
+                        <q-breadcrumbs-el label="Add Tag" icon="notes" :to="{ name: 'graphql-create-tag' }" />
                       </q-item-section>
                     </q-item>
                   </q-list>
@@ -169,11 +173,12 @@
         </q-scroll-area>
       </q-drawer>
 
-      <q-drawer v-if="authStore.$state.isAuthenticated" v-model="drawerRight" :width="250" :breakpoint="700" side="right" bordered>
+      <q-drawer v-if="authStore.$state.isAuthenticated" v-model="drawerRight" :width="250" :breakpoint="700"
+        side="right" bordered>
         <!-- drawer content -->
         <q-scroll-area style="height: calc(100% - 150px); margin-top: 150px; border-right: 1px solid #ddd">
           <q-list padding>
-            
+
             <q-item clickable v-ripple>
               <q-item-section avatar>
                 <q-icon name="inbox" />
@@ -192,7 +197,7 @@
               </q-item-section>
 
               <q-item-section>
-                <router-link :to="{ name: 'add-post' }">
+                <router-link :to="{ name: 'create-post' }">
                   Add Post
                 </router-link>
               </q-item-section>
@@ -204,7 +209,7 @@
               </q-item-section>
 
               <q-item-section>
-                <router-link :to="{ name: 'add-tag' }">
+                <router-link :to="{ name: 'create-tag' }">
                   RestAPI Add Tag
                 </router-link>
               </q-item-section>
@@ -216,7 +221,7 @@
               </q-item-section>
 
               <q-item-section>
-                <router-link :to="{ name: 'graphql-add-post' }">
+                <router-link :to="{ name: 'graphql-create-post' }">
                   GraphQL Add Post
                 </router-link>
               </q-item-section>
@@ -228,7 +233,7 @@
               </q-item-section>
 
               <q-item-section>
-                <router-link :to="{ name: 'graphql-post-list' }">
+                <router-link :to="{ name: 'graphql-posts-list' }">
                   GraphQL Post List
                 </router-link>
               </q-item-section>
@@ -240,7 +245,7 @@
               </q-item-section>
 
               <q-item-section>
-                <router-link :to="{ name: 'graphql-add-tag' }">
+                <router-link :to="{ name: 'graphql-create-tag' }">
                   GraphQL Add Tag
                 </router-link>
               </q-item-section>
@@ -252,7 +257,7 @@
               </q-item-section>
 
               <q-item-section>
-                <router-link :to="{ name: 'user-post-list' }">
+                <router-link :to="{ name: 'user-posts-list' }">
                   RESTAPI User Post List
                 </router-link>
               </q-item-section>
@@ -264,7 +269,7 @@
               </q-item-section>
 
               <q-item-section>
-                <router-link :to="{ name: 'graphql-user-post-list' }">
+                <router-link :to="{ name: 'graphql-user-posts-list' }">
                   GraphQL User Post List
                 </router-link>
               </q-item-section>
@@ -276,7 +281,7 @@
               </q-item-section>
 
               <q-item-section>
-                <router-link :to="{ name: 'user-favorite-post-list' }">
+                <router-link :to="{ name: 'user-favorite-posts-list' }">
                   RESTAPI User Favorite Post List
                 </router-link>
               </q-item-section>
@@ -288,13 +293,13 @@
               </q-item-section>
 
               <q-item-section>
-                <router-link :to="{ name: 'graphql-user-favorite-post-list' }">
+                <router-link :to="{ name: 'graphql-user-favorite-posts-list' }">
                   GraphQL User Favorite Post List
                 </router-link>
               </q-item-section>
             </q-item>
 
-            
+
 
             <q-item clickable v-ripple>
               <q-item-section avatar>
@@ -302,7 +307,7 @@
               </q-item-section>
 
               <q-item-section>
-                <router-link :to="{ name: 'post-search' }">
+                <router-link :to="{ name: 'search-posts' }">
                   REST API Search
                 </router-link>
               </q-item-section>
@@ -314,7 +319,7 @@
               </q-item-section>
 
               <q-item-section>
-                <router-link :to="{ name: 'graphql-search' }">
+                <router-link :to="{ name: 'graphql-search-posts' }">
                   GraphQL Search
                 </router-link>
               </q-item-section>
@@ -340,7 +345,8 @@
         </div>
       </q-drawer>
 
-      <q-drawer v-if="!authStore.$state.isAuthenticated" v-model="drawerRight" :width="250" :breakpoint="700" side="right" bordered>
+      <q-drawer v-if="!authStore.$state.isAuthenticated" v-model="drawerRight" :width="250" :breakpoint="700"
+        side="right" bordered>
         <!-- drawer content -->
         <q-scroll-area style="height: calc(100% - 150px); border-right: 1px solid #ddd">
           <q-list padding>
@@ -394,13 +400,13 @@ export default {
   setup() {
     const authStore = useAuthStore();
 
-const $q = useQuasar();
-const darkQuery = '(prefers-color-scheme: dark)';
-const queryList = window.matchMedia(darkQuery);
-$q.dark.set(queryList.matches);
-queryList.addEventListener('change', (event) => {
-  $q.dark.set(event.matches);
-});
+    const $q = useQuasar();
+    const darkQuery = '(prefers-color-scheme: dark)';
+    const queryList = window.matchMedia(darkQuery);
+    $q.dark.set(queryList.matches);
+    queryList.addEventListener('change', (event) => {
+      $q.dark.set(event.matches);
+    });
     return {
       authStore,
       drawerLeft: ref(false),
@@ -409,7 +415,7 @@ queryList.addEventListener('change', (event) => {
       toggleDarkMode() {
         Dark.toggle()
       },
-      
+
       queryList
     }
   },

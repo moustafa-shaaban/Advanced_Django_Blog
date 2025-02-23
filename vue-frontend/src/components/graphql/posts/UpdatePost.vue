@@ -2,7 +2,7 @@
 import { Notify } from 'quasar'
 import Multiselect from 'vue-multiselect'
 
-import { axiosAPI } from "../../api/axios"
+import { axiosAPI } from "@/api/axios"
 import { updatePostMutation, createCommentMutation } from "@/graphqlMutations"
 
 
@@ -51,7 +51,7 @@ export default {
                     }
                 })
 
-                this.$router.push("/graphql/post-list")
+                this.$router.push({ name: "graphql-posts-list" })
                 Notify.create({
                     message: 'Post Updated Successfully',
                     type: 'positive',
@@ -82,7 +82,7 @@ export default {
                     }
                 })
                 this.commentCard = false;
-                this.$router.push("/graphql/post-list")
+                this.$router.push({ name: "graphql-posts-list" })
                 Notify.create({
                     message: 'Thank ypu for commenting, your comment is waiting admin approval',
                     type: "positive",
@@ -141,7 +141,8 @@ export default {
           </select> -->
                     <div class="q-pa-sm q-mt-md">
                         <q-btn label="Edit" type="submit" color="primary" />
-                        <q-btn label="Cancel" type="button" @click="() => { this.$router.push('/') }"
+                        <q-btn label="Cancel" type="button"
+                            @click="() => { this.$router.push({ name: 'graphql-posts-list' }) }"
                             class="bg-grey-8 text-white q-ml-sm" />
                     </div>
                 </q-form>

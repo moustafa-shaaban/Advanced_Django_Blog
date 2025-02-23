@@ -48,7 +48,7 @@ const { mutate } = useMutation({
     mutationFn: addTag,
     onSuccess: async () => {
         queryClient.invalidateQueries("graphqlTagsList")
-        await router.push('/graphql/tags')
+        await router.push({ name: "graphql-tags" })
         Notify.create({
             message: 'Tag Added Successfully',
             type: "positive",

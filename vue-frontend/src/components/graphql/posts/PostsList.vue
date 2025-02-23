@@ -8,6 +8,7 @@ import { axiosGraphQL } from '@/api/axios';
 import { createPostMutation, deletePostMutation, deleteCommentMutation, addPostToUserFavoritesMutation, likePostMutation } from '@/graphqlMutations';
 import { useRouter } from 'vue-router';
 import Multiselect from 'vue-multiselect'
+
 const authStore = useAuthStore();
 
 const router = useRouter()
@@ -47,14 +48,16 @@ const { data, error, isLoading, isError } = useQuery({
 
 
 async function getTags() {
-    const response = await axiosGraphQL({
-        method: 'post',
-        data: {
-            query: getAllTags
-        }
-    })
-
-    return response.data
+    if (postCard.value) {
+        const response = await axiosGraphQL({
+            method: 'post',
+            data: {
+                query: getAllTags
+            }
+        })
+        return response.data
+    }
+    else return
 }
 
 
@@ -95,7 +98,7 @@ const { mutate } = useMutation({
     mutationFn: addPost,
     onSuccess: async () => {
         queryClient.invalidateQueries("graphqlAllPosts")
-        await router.push('/graphql/post-list')
+        await router.push({ name: 'graphql-posts-list' })
         Notify.create({
             message: 'Post Added Successfully',
             type: "positive",
@@ -343,6 +346,56 @@ function onReset() {
     content.value = null
     tags.value = null
 }
+
+async function deleteCommentFunction(id) {
+    const response = await axiosGraphQL({
+        method: 'post',
+        data: {
+            query: deleteCommentMutation,
+            variables: {
+                "id": parseInt(id),
+            }
+        },
+    })
+
+    return response.data
+}
+
+const { mutate: deleteComment } = useMutation({
+    mutationFn: deleteCommentFunction,
+    onSuccess: async () => {
+        queryClient.invalidateQueries("graphqlAllPosts")
+    },
+    onError: async (error) => {
+        Notify.create({
+            message: error.message,
+            type: "negative",
+            actions: [
+                { icon: 'close', color: 'white', round: true, }
+            ]
+        })
+    },
+})
+
+function confirmDeleteComment(id) {
+    Dialog.create({
+        title: 'Confirm',
+        message: 'Are you sure you want to delete this comment?',
+        cancel: true,
+        persistent: true
+    }).onOk(() => {
+        deleteComment(id)
+        Notify.create({
+            message: 'Post Deleted Successfully',
+            type: 'positive',
+            actions: [
+                { label: 'Dismiss', color: 'white' }
+            ]
+        })
+    }).onCancel(() => {
+        return
+    })
+}
 </script>
 
 <template>
@@ -391,7 +444,7 @@ function onReset() {
 
                 <q-card-actions
                     v-if="authStore.$state.isAuthenticated && authStore.$state.username === post.author.username">
-                    <router-link :to="{ name: 'graphql-edit-post', params: { slug: post.slug } }">
+                    <router-link :to="{ name: 'graphql-update-post', params: { slug: post.slug } }">
                         <q-btn flat color="primary">
                             Detail
                         </q-btn>
@@ -418,7 +471,7 @@ function onReset() {
                             </q-item-label>
                             <q-card-actions
                                 v-if="authStore.$state.isAuthenticated && authStore.$state.username === comment.user.username">
-                                <router-link :to="{ name: 'graphql-edit-comment', params: { id: comment.id } }">
+                                <router-link :to="{ name: 'graphql-update-comment', params: { id: comment.id } }">
                                     <q-btn flat color="primary">
                                         Edit
                                     </q-btn>

@@ -1,20 +1,34 @@
 <script setup>
-import { ref } from 'vue';
-import { Notify } from 'quasar'
+import { ref } from "vue";
+import { Notify } from "quasar";
 import { useRouter } from 'vue-router';
-import { useMutation } from '@tanstack/vue-query'
-import { createTag } from '../../api/axios';
+import { createTagMutation } from "@/graphqlMutations";
+import { useQueryClient, useMutation } from '@tanstack/vue-query';
+import { axiosGraphQL } from "@/api/axios";
 
-const router = useRouter();
+const router = useRouter()
+const queryClient = useQueryClient();
+const name = ref("");
 
-const name = ref('');
+async function createTag() {
+    const response = await axiosGraphQL({
+        method: 'post',
+        data: {
+            query: createTagMutation,
+            variables: {
+                "name": name.value,
+            }
+        },
+    })
 
+    return response.data
+}
 
-const { isPending, mutate } = useMutation({
+const { mutate } = useMutation({
     mutationFn: createTag,
     onSuccess: async () => {
-
-        await router.push('/tags')
+        queryClient.invalidateQueries("graphqlAllTags")
+        await router.push({ name: "graphql-tags" })
         Notify.create({
             message: 'Tag Added Successfully',
             type: "positive",
@@ -26,7 +40,7 @@ const { isPending, mutate } = useMutation({
     onError: async (error) => {
         Notify.create({
             message: error.message,
-            color: "negative",
+            type: "negative",
             actions: [
                 { icon: 'close', color: 'white', round: true, }
             ]
@@ -36,21 +50,17 @@ const { isPending, mutate } = useMutation({
 
 function handleSubmit() {
     mutate({
-        name: name.value
+        name: name.value,
     })
 }
 
 function onReset() {
     name.value = null
 }
-
 </script>
 
 <template>
     <q-page class="flex flex-center">
-        <div v-if="isPending" class="alert alert-primary" role="alert">
-            Adding tag...
-        </div>
         <q-card flat bordered class="my-card">
             <q-card-section>
                 <div class="row items-center no-wrap">
@@ -62,11 +72,10 @@ function onReset() {
 
             <q-card-section>
                 <q-form @submit.prevent="handleSubmit" @reset="onReset">
-                    <q-input filled v-model="name" label="Tag Name" required lazy-rules
-                        :rules="[val => val && val.length > 0 || 'Tag Name is required']" />
-
+                    <q-input filled v-model.lazy.trim="name" label="Tag name" required lazy-rules
+                        :rules="[val => val && val.length > 0 || 'Tag name is required']" />
                     <div class="q-pa-sm q-mt-md">
-                        <q-btn label="Add Tag" type="submit" color="primary" />
+                        <q-btn label="Create Tag" type="submit" color="primary" />
                         <q-btn label="Reset" type="reset" class="bg-grey-8 text-white q-ml-sm" />
                     </div>
                 </q-form>

@@ -26,12 +26,12 @@
     </q-card>
   </q-page>
 </template>
-    
+
 <script>
 import { Notify } from 'quasar'
 import { useRouter } from 'vue-router';
 
-import { useAuthStore } from '../../stores/authStore';
+import { useAuthStore } from '@/stores/authStore';
 
 export default {
   name: "LoginPage",
@@ -89,4 +89,3 @@ export default {
 
 }
 </script>
-    

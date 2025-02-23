@@ -65,7 +65,7 @@ const { mutate } = useMutation({
     mutationFn: addPost,
     onSuccess: async () => {
         queryClient.invalidateQueries("graphqlAllPosts")
-        await router.push('/graphql/post-list')
+        await router.push({ name: 'graphql-posts-list' })
         Notify.create({
             message: 'Post Added Successfully',
             type: "positive",
@@ -128,7 +128,7 @@ function onReset() {
                             deselect-label="You must select at least one tag"
                             :options="tags.data.allTags.map(tag => tag.id)" :searchable="true" :allow-empty="false">
                             <template slot="singleLabel" slot-scope="{ tag }"><strong>{{ tag.name
-                                    }}</strong></template>
+                            }}</strong></template>
                         </multiselect>
                         <div class="q-pa-sm q-mt-md">
                             <q-btn label="Add Post" type="submit" color="primary" />

@@ -4,7 +4,7 @@ import { useQuasar } from 'quasar'
 import Multiselect from 'vue-multiselect'
 import { useRouter } from 'vue-router';
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
-import { createPost, getAllTags } from '../../api/axios';
+import { createPost, getAllTags } from '@/api/axios';
 
 const title = ref('')
 const content = ref('')
@@ -24,7 +24,7 @@ const { isPending, mutate } = useMutation({
     mutationFn: createPost,
     onSuccess: async () => {
         queryClient.invalidateQueries("allBlogPosts")
-        await router.push('/')
+        await router.push({ name: "posts-list" })
         $q.notify({
             message: 'Post Added Successfully',
             type: "positive",

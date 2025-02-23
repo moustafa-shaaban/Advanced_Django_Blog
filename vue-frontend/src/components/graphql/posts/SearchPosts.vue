@@ -3,7 +3,7 @@ import Multiselect from 'vue-multiselect'
 import moment from 'moment';
 
 import { useAuthStore } from '@/stores/authStore';
-import { filterPostsByTitle } from "../../graphqlQueries";
+import { filterPostsByTitle } from '@/graphqlQueries';
 
 
 export default {
@@ -76,7 +76,8 @@ export default {
                 <q-form @submit.prevent="getPosts" @reset="onReset">
                     <q-input filled v-model="title" label="Search for Post by Title" required lazy-rules
                         :rules="[val => val && val.length > 0 || 'Post Title is required']" />
-                    <q-input filled v-model="limit" type="number" label="Limit Results (if not provided default is 5)" />
+                    <q-input filled v-model="limit" type="number"
+                        label="Limit Results (if not provided default is 5)" />
                     <div class="q-pa-sm q-mt-md">
                         <q-btn label="Search" type="submit" color="primary" />
                         <q-btn label="Reset" type="reset" class="bg-grey-8 text-white q-ml-sm" />
@@ -86,7 +87,8 @@ export default {
         </q-card>
 
         <div v-else class="q-mt-lg">
-            <q-btn v-if="this.allPosts.length > 0" @click="this.allPosts = []" class="q-my-md">Clear Search Result</q-btn>
+            <q-btn v-if="this.allPosts.length > 0" @click="this.allPosts = []" class="q-my-md">Clear Search
+                Result</q-btn>
             <q-card v-for="post in allPosts.edges" :key="post.id" class="my-card q-mt-md" flat bordered>
                 <q-item>
                     <!-- <q-item-section avatar>
@@ -125,7 +127,7 @@ export default {
                 <q-separator />
 
                 <q-card-actions v-if="authStore.$state.isAuthenticated">
-                    <router-link :to="{ name: 'edit-post', params: { slug: post.node.slug } }">
+                    <router-link :to="{ name: 'graphql-update-post', params: { slug: post.node.slug } }">
                         <q-btn flat color="primary">
                             Detail
                         </q-btn>
@@ -148,7 +150,7 @@ export default {
                                     by: {{ comment.user.username }}
                                 </q-item-label>
                                 <q-card-actions v-if="authStore.$state.isAuthenticated">
-                                    <router-link :to="{ name: 'edit-comment', params: { id: comment.id } }">
+                                    <router-link :to="{ name: 'graphql-update-comment', params: { id: comment.id } }">
                                         <q-btn flat color="primary">
                                             Edit
                                         </q-btn>
