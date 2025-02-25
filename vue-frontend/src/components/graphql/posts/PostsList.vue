@@ -48,16 +48,13 @@ const { data, error, isLoading, isError } = useQuery({
 
 
 async function getTags() {
-    if (postCard.value) {
-        const response = await axiosGraphQL({
-            method: 'post',
-            data: {
-                query: getAllTags
-            }
-        })
-        return response.data
-    }
-    else return
+    const response = await axiosGraphQL({
+        method: 'post',
+        data: {
+            query: getAllTags
+        }
+    })
+    return response.data
 }
 
 
@@ -510,7 +507,7 @@ function confirmDeleteComment(id) {
                                 deselect-label="You must select at least one tag"
                                 :options="tags.data.allTags.map(tag => tag.id)" :searchable="true" :allow-empty="false">
                                 <template slot="singleLabel" slot-scope="{ tag }"><strong>{{ tag.name
-                                }}</strong></template>
+                                        }}</strong></template>
                             </multiselect>
                             <div class="q-pa-sm q-mt-md">
                                 <q-btn label="Add Post" type="submit" color="primary" />

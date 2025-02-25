@@ -29,9 +29,6 @@ export default {
         }
     },
     methods: {
-        refreshPage() {
-            window.location.reload();
-        },
         // https://stackoverflow.com/a/54662898
         format_date(value) {
             if (value) {

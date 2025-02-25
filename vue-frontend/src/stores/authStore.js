@@ -1,52 +1,51 @@
 import { defineStore } from "pinia";
 import { useLocalStorage } from "@vueuse/core";
-import { Cookies } from "quasar"
 
 import { axiosAPI } from "../api/axios";
-import axios from "axios";
 
-export const useAuthStore = defineStore('auth', {
-    state: () => ({
-        isAuthenticated: useLocalStorage('Authenticated', null),
-        username: useLocalStorage("Username", null),
-    }),
-    actions: {
-        async getCSRFToken() {
-            const response = await axiosAPI.get("csrf/", {
-                credentials: "include",
-            });
+export const useAuthStore = defineStore("auth", {
+  state: () => ({
+    isAuthenticated: useLocalStorage("Authenticated", null),
+    username: useLocalStorage("Username", null),
+  }),
+  actions: {
+    async getCSRFToken() {
+      const response = await axiosAPI.get("csrf/", {
+        credentials: "include",
+      });
 
-            let token = response.headers.get("X-CSRFToken");
-            return token
-        },
+      let token = response.headers.get("X-CSRFToken");
+      return token;
+    },
 
-        async getSession() {
-            await axiosAPI.get('/session/')
-        },
+    async getSession() {
+      await axiosAPI.get("/session/");
+    },
 
-        async login(email, password) {
-            await axiosAPI.post('/login/', {email, password})
-            const response = await axiosAPI.get('username/',)
-            this.username = response.data.username
-            this.isAuthenticated = true;
-        },
+    async login(user) {
+      await axiosAPI.post("/login/", user);
+      const response = await axiosAPI.get("username/");
+      this.username = response.data.username;
+      this.isAuthenticated = true;
+    },
 
-        async register(name, email, username, password, password_confirm, birthday) {
-            await axiosAPI.post('accounts/register/', {name, email, username, password, password_confirm, birthday}, {
-            })
-        },
+    async register(user) {
+      await axiosAPI.post("/api-auth/register/", user);
+    },
 
-        async logout() {
-            await axiosAPI.post('/api-auth/logout/', {
-                
-            }, {
-                withCredentials: true,
-            })
-            this.isAuthenticated = null;
-            localStorage.removeItem('Authenticated')
+    async logout() {
+      await axiosAPI.post(
+        "/api-auth/logout/",
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+      this.isAuthenticated = null;
+      localStorage.removeItem("Authenticated");
 
-            this.username = null;
-            localStorage.removeItem('Username')
-        },
-    }
-})
+      this.username = null;
+      localStorage.removeItem("Username");
+    },
+  },
+});

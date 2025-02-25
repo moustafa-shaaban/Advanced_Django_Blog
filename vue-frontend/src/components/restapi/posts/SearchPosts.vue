@@ -25,10 +25,6 @@ export default {
         }
     },
     methods: {
-        refreshPage() {
-            window.location.reload();
-        },
-
         async getPosts() {
             try {
                 await axiosAPI.get(`/search/?title=${this.title}&limit=${this.limit ? this.limit : 5}`).then((response) => {

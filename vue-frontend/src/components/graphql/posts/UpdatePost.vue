@@ -36,9 +36,6 @@ export default {
             });
     },
     methods: {
-        refreshPage() {
-            window.location.reload();
-        },
         async updatePost(e) {
             try {
                 this.$apollo.mutate({
@@ -56,7 +53,6 @@ export default {
                     message: 'Post Updated Successfully',
                     type: 'positive',
                     actions: [
-                        { label: 'Refresh', color: 'white', handler: () => { this.refreshPage() } },
                         { icon: 'close', color: 'white', round: true, },
                     ]
                 })

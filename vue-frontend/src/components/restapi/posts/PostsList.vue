@@ -1,18 +1,16 @@
 <script setup>
 import { ref } from 'vue';
 import { useQueryClient, useQuery, useMutation } from '@tanstack/vue-query';
-import { Dialog, Notify, useQuasar, date } from 'quasar';
+import { Dialog, Notify, date } from 'quasar';
 import Multiselect from 'vue-multiselect'
 
 import { getBlogPosts, deletePost, getAllTags, createPost, deleteComment, addPostToFavorites, likePost } from '@/api/axios';
-import router from '@/router';
 import { useAuthStore } from '@/stores/authStore';
 
 // Access QueryClient instance
 const queryClient = useQueryClient()
 
 const authStore = useAuthStore();
-const $q = useQuasar();
 
 const formCard = ref(false);
 const title = ref('')
@@ -24,7 +22,7 @@ const { isPending, isError, data: posts, error } = useQuery({
     queryKey: ['allBlogPosts'],
     queryFn: getBlogPosts,
     onError: async (error) => {
-        $q.notify({
+        Notify.create({
             message: error.message,
             color: "negative",
             actions: [
@@ -38,7 +36,7 @@ const { data: tags } = useQuery({
     queryKey: ['tags'],
     queryFn: getAllTags,
     onError: async (error) => {
-        $q.notify({
+        Notify.create({
             message: error.message,
             color: "negative",
             actions: [
@@ -91,8 +89,8 @@ const { mutate } = useMutation({
     mutationFn: createPost,
     onSuccess: async () => {
         queryClient.invalidateQueries("allBlogPosts")
-        await router.push({ name: "posts-list" })
-        $q.notify({
+        // await router.push({ name: "posts-list" })
+        Notify.create({
             message: 'Post Added Successfully',
             type: "positive",
             actions: [
@@ -101,7 +99,7 @@ const { mutate } = useMutation({
         })
     },
     onError: async (error) => {
-        $q.notify({
+        Notify.create({
             message: error.message,
             color: "negative",
             actions: [
@@ -116,15 +114,15 @@ const deletePostFunction = (slug) => {
 }
 
 function confirmDeletePost(slug) {
-    $q.dialog({
+    Dialog.create({
         title: 'Confirm',
         message: 'Are you sure you want to delete this post?',
         cancel: true,
         persistent: true
     }).onOk(() => {
         deletePostFunction(slug)
-        router.push({ name: "posts-list" })
-        $q.notify({
+        //router.push({ name: "posts-list" })
+        Notify.create({
             message: 'Post Deleted Successfully',
             type: "positive",
             actions: [
@@ -144,6 +142,13 @@ const removePostFromFavorites = (id) => {
 
 const addPostToUserFavorites = (id) => {
     addPostToFavoritesMutation.mutate(id)
+    Notify.create({
+        message: 'Added Post to Favorites List',
+        type: "positive",
+        actions: [
+            { icon: 'close', color: 'white', round: true, }
+        ]
+    })
 }
 
 const HandleLikePost = (id) => {
@@ -162,7 +167,7 @@ function confirmRemovePostFromFavorites(id) {
         persistent: true
     }).onOk(() => {
         removePostFromFavorites(id)
-        router.push('/')
+        //router.push({ name: 'posts-list' })
         Notify.create({
             message: 'Removed Post from Favorites Successfully',
             type: 'positive',

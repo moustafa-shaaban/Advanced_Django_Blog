@@ -21,12 +21,8 @@ export default {
     methods: {
         async updateComment() {
             try {
-                await axiosAPI.put(`/comments/${this.comment.id}/`, this.comment, {
-                    headers: {
-                        'X-CSRFToken': Cookies.get('csrftoken')
-                    }
-                }).then(response => {
-                    this.$router.push('/');
+                await axiosAPI.put(`/comments/${this.comment.id}/`, this.comment).then(response => {
+                    this.$router.push({ name: 'posts-list' });
                     Notify.create({
                         message: 'Comment Updated Successfully',
                         type: "positive",
