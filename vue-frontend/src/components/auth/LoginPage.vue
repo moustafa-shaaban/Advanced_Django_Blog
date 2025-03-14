@@ -33,6 +33,7 @@ import { Notify, Cookies } from 'quasar'
 import { useRouter } from 'vue-router';
 
 import { useAuthStore } from '@/stores/authStore';
+import { axiosAPI } from '@/api/axios';
 
 const authStore = useAuthStore();
 const router = useRouter();

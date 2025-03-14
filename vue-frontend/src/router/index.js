@@ -11,7 +11,6 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
   let authenticated = authStore.$state.isAuthenticated;
-  const router = useRouter();
 
   if (to.meta.requireAuth && !authenticated) {
     next({ name: "login" });

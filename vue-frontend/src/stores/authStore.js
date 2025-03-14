@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { useLocalStorage } from "@vueuse/core";
 
 import { axiosAPI } from "../api/axios";
+import { Notify } from "quasar";
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
@@ -21,10 +22,21 @@ export const useAuthStore = defineStore("auth", {
     },
 
     async login(user) {
-      await axiosAPI.post("http://localhost:8000/_allauth/browser/v1/auth/login", user);
-      const response = await axiosAPI.get("username/");
-      this.username = response.data.username;
-      this.isAuthenticated = true;
+      try {
+        await axiosAPI.post(
+          "http://localhost:8000/_allauth/browser/v1/auth/login",
+          user
+        );
+        const response = await axiosAPI.get("username/");
+        this.username = response.data.username;
+        this.isAuthenticated = true;
+      } catch (error) {
+        Notify.create({
+          message: error.message,
+          type: "negative",
+          actions: [{ icon: "close", color: "white", round: true }],
+        });
+      }
     },
 
     async logout() {

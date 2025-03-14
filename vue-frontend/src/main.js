@@ -43,6 +43,9 @@ app.use(Quasar, {
     Cookies,
     Loading,
   },
+  config: {
+    dark: "auto",
+  },
 });
 
 app.use(VueQueryPlugin);
