@@ -10,9 +10,7 @@ export const useAuthStore = defineStore("auth", {
   }),
   actions: {
     async getCSRFToken() {
-      const response = await axiosAPI.get("csrf/", {
-        credentials: "include",
-      });
+      const response = await axiosAPI.get("csrf/");
 
       let token = response.headers.get("X-CSRFToken");
       return token;
@@ -23,29 +21,34 @@ export const useAuthStore = defineStore("auth", {
     },
 
     async login(user) {
-      await axiosAPI.post("/login/", user);
+      await axiosAPI.post("http://localhost:8000/_allauth/browser/v1/auth/login", user);
       const response = await axiosAPI.get("username/");
       this.username = response.data.username;
       this.isAuthenticated = true;
     },
 
-    async register(user) {
-      await axiosAPI.post("/api-auth/register/", user);
-    },
-
     async logout() {
-      await axiosAPI.post(
-        "/api-auth/logout/",
-        {},
-        {
-          withCredentials: true,
-        }
-      );
+      await axiosAPI.post("/api-auth/logout/");
       this.isAuthenticated = null;
       localStorage.removeItem("Authenticated");
-
       this.username = null;
       localStorage.removeItem("Username");
+      // await axiosAPI.delete("http://localhost:8000/_allauth/browser/v1/auth/session");
     },
+
+    // async register(user) {
+    //   await axiosAPI.post(
+    //     "http://localhost:8000/_allauth/browser/v1/auth/signup",
+    //     user
+    //   );
+    //   router.push('/verify-email')
+    // },
+
+    // async verifyEmail(key) {
+    //   await axiosAPI.post(
+    //     "http://localhost:8000/_allauth/browser/v1/auth/email/verify",
+    //     key
+    //   );
+    // },
   },
 });

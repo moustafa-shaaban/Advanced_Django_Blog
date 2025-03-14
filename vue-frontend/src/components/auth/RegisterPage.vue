@@ -11,18 +11,18 @@
 
       <q-card-section>
         <q-form @submit.prevent="register" @reset="onReset">
-          <q-input filled v-model="user.name" label="Name" required lazy-rules
-            :rules="[val => val && val.length > 0 || 'Name is required']" />
-          <q-input filled v-model="user.email" type="email" required label="Email" lazy-rules
+          <!-- <q-input filled v-model="user.name" label="Name" required lazy-rules
+            :rules="[val => val && val.length > 0 || 'Name is required']" /> -->
+            <q-input filled v-model="user.email" type="email" required label="Email" lazy-rules
             :rules="[val => val && val.length > 0 || 'Email is required']" />
-          <q-input filled v-model="user.username" label="Username" required lazy-rules
-            :rules="[val => val && val.length > 0 || 'Username is required']" />
+            <q-input filled v-model="user.username" type="text" label="Username" required lazy-rules
+                :rules="[val => val && val.length > 0 || 'Username is required']" />
           <q-input filled v-model="user.password" type="password" required label="Password" lazy-rules
             :rules="[val => val && val.length > 0 || 'Password is required']" />
-          <q-input filled v-model="user.password_confirm" type="password" required label="Confirm Password" lazy-rules
+          <q-input filled v-model="user.password2" type="password" required label="Confirm Password" lazy-rules
             :rules="[val => val && val.length > 0 || 'Password is required']" />
-          <q-input filled v-model="user.birthday" type="date" required label="Date of Birth" lazy-rules
-            :rules="[val => val && val.length > 0 || 'Date of Birth is required']" />
+          <!-- <q-input filled v-model="user.birthday" type="date" required label="Date of Birth" lazy-rules
+            :rules="[val => val && val.length > 0 || 'Date of Birth is required']" /> -->
           <q-separator />
           <div class="q-pa-sm q-mt-md">
             <q-btn label="Register" type="submit" color="primary" />
@@ -44,41 +44,55 @@ import { useAuthStore } from '@/stores/authStore';
 const authStore = useAuthStore();
 const router = useRouter();
 
+// const user = reactive({
+//   name: '',
+//   email: '',
+//   username: '',
+//   password: '',
+//   password_confirm: '',
+//   birthday: '',
+// })
+
 const user = reactive({
-  name: '',
-  email: '',
   username: '',
+  email: '',
   password: '',
-  password_confirm: '',
-  birthday: '',
+  password2: '',
 })
 
 async function register() {
-  try {
-    await authStore.register(user)
-    router.push('/login')
+  await authStore.register(user)
+    router.push('/verify-email')
     Notify.create({
-      message: 'Registered Successfully, You can now login',
+      message: 'Registered Successfully, email confirmation link sent',
       type: "positive",
       actions: [
         { icon: 'close', color: 'white', round: true, }
       ]
     })
-  } catch (error) {
-    Notify.create({
-      message: error.message,
-      color: "negative",
-      actions: [
-        { icon: 'close', color: 'white', round: true, }
-      ]
-    })
-  }
+  // try {
+  //   await authStore.register(user)
+  //   router.push('/verify-email')
+  //   Notify.create({
+  //     message: 'Registered Successfully, email confirmation link sent',
+  //     type: "positive",
+  //     actions: [
+  //       { icon: 'close', color: 'white', round: true, }
+  //     ]
+  //   })
+  // } catch (error) {
+  //   Notify.create({
+  //     message: error.message,
+  //     color: "negative",
+  //     actions: [
+  //       { icon: 'close', color: 'white', round: true, }
+  //     ]
+  //   })
+  // }
 }
 
 function onReset() {
-  this.username = null
-  this.password = null
-  this.password_confirm = null
+  user = null
 }
 </script>
 

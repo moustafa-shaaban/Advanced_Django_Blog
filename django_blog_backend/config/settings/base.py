@@ -300,6 +300,13 @@ ACCOUNT_FORMS = {"signup": "django_blog_backend.users.forms.UserSignupForm"}
 SOCIALACCOUNT_ADAPTER = "django_blog_backend.users.adapters.SocialAccountAdapter"
 # https://docs.allauth.org/en/latest/socialaccount/configuration.html
 SOCIALACCOUNT_FORMS = {"signup": "django_blog_backend.users.forms.UserSocialSignupForm"}
+# HEADLESS_ONLY = True
+# These are the URLs to be implemented by your single-page application.
+# HEADLESS_FRONTEND_URLS = {
+#     "account_confirm_email": "http://localhost:8000/account/verify-email/{key}",
+#     "account_reset_password_from_key": "http://localhost:8000/account/password/reset/key/{key}",
+#     "account_signup": "http://localhost:8000/account/signup",
+# }
 # django-compressor
 # ------------------------------------------------------------------------------
 # https://django-compressor.readthedocs.io/en/latest/quickstart/#installation
