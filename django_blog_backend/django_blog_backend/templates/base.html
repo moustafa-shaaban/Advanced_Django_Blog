@@ -57,7 +57,7 @@
   {% endblock javascript %}
 </head>
 
-<body class="{% block bodyclass %}{% endblock bodyclass %}">
+<body class="{% block bodyclass %}{% endblock bodyclass %}" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
   {% block body %}
   <div class="mb-1">
     {% include 'header.html' %}

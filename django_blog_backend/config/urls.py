@@ -9,6 +9,11 @@ from django.views.generic import TemplateView
 from drf_spectacular.views import SpectacularAPIView
 from drf_spectacular.views import SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
+from allauth.account.decorators import secure_admin_login
+
+# https://docs.allauth.org/en/dev/common/admin.html
+admin.autodiscover()
+admin.site.login = secure_admin_login(admin.site.login)
 
 urlpatterns = [
     # path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
