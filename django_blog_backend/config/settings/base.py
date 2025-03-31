@@ -355,3 +355,14 @@ CSRF_TRUSTED_ORIGINS = ['http://localhost:5173']
 # }
 
 MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"
+
+ACCOUNT_LOGIN_BY_CODE_ENABLED = True
+ACCOUNT_EMAIL_VERIFICATION_BY_CODE_ENABLED = True
+ACCOUNT_PASSWORD_RESET_BY_CODE_ENABLED = True
+MFA_SUPPORTED_TYPES = [
+    "webauthn",
+    "totp",
+    "recovery_codes",
+]
+MFA_PASSKEY_LOGIN_ENABLED = True
+MFA_PASSKEY_SIGNUP_ENABLED = True
