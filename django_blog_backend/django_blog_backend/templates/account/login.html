@@ -5,9 +5,8 @@
     {% trans "Sign In" %}
 {% endblock head_title %}
 {% block content %}
-    {% element h1 %}
-        {% trans "Sign In" %}
-    {% endelement %}
+    <div class="mx-auto col-8 mt-4">
+        {% element h1 %} {% trans "Sign In" %} {% endelement %}
     {% if not SOCIALACCOUNT_ONLY %}
         {% setvar link %}
             <a href="{{ signup_url }}">
@@ -37,11 +36,14 @@
         {% element hr %}
         {% endelement %}
         {% element button_group vertical=True %}
+            
+            {% comment %}
             {% if PASSKEY_LOGIN_ENABLED %}
                 {% element button type="submit" form="mfa_login" id="passkey_login" tags="prominent,login,outline,primary" %}
                     {% trans "Sign in with a passkey" %}
                 {% endelement %}
             {% endif %}
+            {% endcomment %}
             {% if LOGIN_BY_CODE_ENABLED %}
                 {% element button href=request_login_code_url tags="prominent,login,outline,primary" %}
                     {% trans "Mail me a sign-in code" %}
@@ -52,6 +54,7 @@
     {% if SOCIALACCOUNT_ENABLED %}
         {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
     {% endif %}
+    </div>
 {% endblock content %}
 {% block extra_body %}
     {{ block.super }}

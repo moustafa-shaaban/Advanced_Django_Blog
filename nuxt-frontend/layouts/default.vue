@@ -1,3 +1,55 @@
+<script setup>
+import { useAuthStore } from '@/stores/authStore';
+import { Dark, Notify, useQuasar } from 'quasar';
+import { ref } from 'vue'
+
+const authStore = useAuthStore();
+const username = ref(authStore.$state.username)
+const leftDrawer = ref(false);
+const rightDrawer = ref(false);
+
+function toggleLeftDrawer() {
+    leftDrawer.value = !leftDrawer.value
+}
+
+function toggleRightDrawer() {
+    rightDrawer.value = !rightDrawer.value
+}
+
+const darkMode = localStorage.getItem('darkMode') === 'true';
+Dark.set(darkMode);
+
+function toggleTheme() {
+    Dark.toggle()
+    localStorage.setItem('darkMode', Dark.isActive);
+}
+
+const $q = useQuasar();
+
+
+async function logout() {
+    try {
+        authStore.logout()
+        navigateTo('auth/login')
+        $q.notify({
+            message: 'Logged out Successfully',
+            type: "positive",
+            actions: [
+                { icon: 'close', color: 'white', round: true, }
+            ]
+        })
+    } catch (error) {
+        $q.notify({
+            message: error.message,
+            type: "negative",
+            actions: [
+                { icon: 'close', color: 'white', round: true, }
+            ]
+        })
+    }
+}
+</script>
+
 <template>
     <q-layout view="hHh lpR fFf">
         <q-header reveal elevated class="bg-primary text-white" height-hint="98">
@@ -130,8 +182,8 @@
                         <q-breadcrumbs-el label="Home" icon="home" to="/" />
                         <q-breadcrumbs-el label="About" icon="info" to="/about" />
                         <q-space />
-                        <q-breadcrumbs-el label="Login" icon="login" to="/login" />
-                        <q-breadcrumbs-el label="Register" icon="person_add" to="/register" />
+                        <q-breadcrumbs-el label="Login" icon="login" to="auth/login" />
+                        <q-breadcrumbs-el label="Register" icon="person_add" to="auth/register" />
                         <q-btn flat round :icon="$q.dark.isActive ? 'light_mode' : 'dark_mode'" @click="toggleTheme" />
                         <q-btn flat icon="menu" @click="toggleRightDrawer" />
                     </q-breadcrumbs>
@@ -184,151 +236,7 @@
             <q-scroll-area style="height: calc(100% - 150px); margin-top: 150px; border-right: 1px solid #ddd">
                 <q-list padding>
 
-                    <q-item clickable v-ripple>
-                        <q-item-section avatar>
-                            <q-icon name="inbox" />
-                        </q-item-section>
 
-                        <q-item-section>
-                            <router-link :to="{ name: 'tags' }">
-                                Tags List
-                            </router-link>
-                        </q-item-section>
-                    </q-item>
-
-                    <q-item clickable v-ripple>
-                        <q-item-section avatar>
-                            <q-icon name="inbox" />
-                        </q-item-section>
-
-                        <q-item-section>
-                            <router-link :to="{ name: 'create-post' }">
-                                Add Post
-                            </router-link>
-                        </q-item-section>
-                    </q-item>
-
-                    <q-item clickable v-ripple>
-                        <q-item-section avatar>
-                            <q-icon name="send" />
-                        </q-item-section>
-
-                        <q-item-section>
-                            <router-link :to="{ name: 'create-tag' }">
-                                RestAPI Add Tag
-                            </router-link>
-                        </q-item-section>
-                    </q-item>
-
-                    <q-item clickable v-ripple>
-                        <q-item-section avatar>
-                            <q-icon name="inbox" />
-                        </q-item-section>
-
-                        <q-item-section>
-                            <router-link :to="{ name: 'graphql-create-post' }">
-                                GraphQL Add Post
-                            </router-link>
-                        </q-item-section>
-                    </q-item>
-
-                    <q-item clickable v-ripple>
-                        <q-item-section avatar>
-                            <q-icon name="send" />
-                        </q-item-section>
-
-                        <q-item-section>
-                            <router-link :to="{ name: 'graphql-posts-list' }">
-                                GraphQL Post List
-                            </router-link>
-                        </q-item-section>
-                    </q-item>
-
-                    <q-item clickable v-ripple>
-                        <q-item-section avatar>
-                            <q-icon name="send" />
-                        </q-item-section>
-
-                        <q-item-section>
-                            <router-link :to="{ name: 'graphql-create-tag' }">
-                                GraphQL Add Tag
-                            </router-link>
-                        </q-item-section>
-                    </q-item>
-
-                    <q-item clickable v-ripple>
-                        <q-item-section avatar>
-                            <q-icon name="send" />
-                        </q-item-section>
-
-                        <q-item-section>
-                            <router-link :to="{ name: 'user-posts-list' }">
-                                RESTAPI User Post List
-                            </router-link>
-                        </q-item-section>
-                    </q-item>
-
-                    <q-item clickable v-ripple>
-                        <q-item-section avatar>
-                            <q-icon name="send" />
-                        </q-item-section>
-
-                        <q-item-section>
-                            <router-link :to="{ name: 'graphql-user-posts-list' }">
-                                GraphQL User Post List
-                            </router-link>
-                        </q-item-section>
-                    </q-item>
-
-                    <q-item clickable v-ripple>
-                        <q-item-section avatar>
-                            <q-icon name="send" />
-                        </q-item-section>
-
-                        <q-item-section>
-                            <router-link :to="{ name: 'user-favorite-posts-list' }">
-                                RESTAPI User Favorite Post List
-                            </router-link>
-                        </q-item-section>
-                    </q-item>
-
-                    <q-item clickable v-ripple>
-                        <q-item-section avatar>
-                            <q-icon name="send" />
-                        </q-item-section>
-
-                        <q-item-section>
-                            <router-link :to="{ name: 'graphql-user-favorite-posts-list' }">
-                                GraphQL User Favorite Post List
-                            </router-link>
-                        </q-item-section>
-                    </q-item>
-
-
-
-                    <q-item clickable v-ripple>
-                        <q-item-section avatar>
-                            <q-icon name="search" />
-                        </q-item-section>
-
-                        <q-item-section>
-                            <router-link :to="{ name: 'search-posts' }">
-                                REST API Search
-                            </router-link>
-                        </q-item-section>
-                    </q-item>
-
-                    <q-item clickable v-ripple>
-                        <q-item-section avatar>
-                            <q-icon name="search" />
-                        </q-item-section>
-
-                        <q-item-section>
-                            <router-link :to="{ name: 'graphql-search-posts' }">
-                                GraphQL Search
-                            </router-link>
-                        </q-item-section>
-                    </q-item>
 
                     <q-item clickable v-ripple @click="logout">
                         <q-item-section avatar>
@@ -355,7 +263,7 @@
             <!-- drawer content -->
             <q-scroll-area style="height: calc(100% - 150px); border-right: 1px solid #ddd">
                 <q-list padding>
-                    <q-item clickable v-ripple to="/login">
+                    <q-item clickable v-ripple to="auth/login">
                         <q-item-section avatar>
                             <q-icon name="login" />
                         </q-item-section>
@@ -364,7 +272,7 @@
                             Login
                         </q-item-section>
                     </q-item>
-                    <q-item clickable v-ripple to="/register">
+                    <q-item clickable v-ripple to="auth/register">
                         <q-item-section avatar>
                             <q-icon name="login" />
                         </q-item-section>
@@ -379,60 +287,8 @@
 
 
         <q-page-container>
-            <router-view />
+            <slot />
         </q-page-container>
 
     </q-layout>
 </template>
-
-<script setup>
-import { useAuthStore } from '@/stores/authStore';
-import { Dark, Notify } from 'quasar';
-import { ref } from 'vue'
-import { useRouter } from 'vue-router';
-
-const authStore = useAuthStore();
-const username = ref(authStore.$state.username)
-const router = useRouter();
-const leftDrawer = ref(false);
-const rightDrawer = ref(false);
-
-function toggleLeftDrawer() {
-    leftDrawer.value = !leftDrawer.value
-}
-
-function toggleRightDrawer() {
-    rightDrawer.value = !rightDrawer.value
-}
-
-
-const darkMode = localStorage.getItem('darkMode') === 'true';
-Dark.set(darkMode);
-
-function toggleTheme() {
-    Dark.toggle()
-    localStorage.setItem('darkMode', Dark.isActive);
-}
-
-async function logout() {
-    try {
-        authStore.logout()
-        router.push('/login')
-        Notify.create({
-            message: 'Logged out Successfully',
-            type: "positive",
-            actions: [
-                { icon: 'close', color: 'white', round: true, }
-            ]
-        })
-    } catch (error) {
-        Notify.create({
-            message: error.message,
-            type: "negative",
-            actions: [
-                { icon: 'close', color: 'white', round: true, }
-            ]
-        })
-    }
-}
-</script>
