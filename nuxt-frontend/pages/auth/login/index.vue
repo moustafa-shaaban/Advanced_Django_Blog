@@ -1,39 +1,16 @@
-<template>
-  <q-page class="flex flex-center">
-    <q-card v-if="!authStore.isAuthenticated" flat bordered class="my-card">
-      <q-card-section>
-        <div class="row items-center no-wrap">
-          <div class="col">
-            <div class="text-h6">Sign to your account</div>
-          </div>
-        </div>
-      </q-card-section>
-
-      <q-card-section>
-        <q-form @submit.prevent="login" @reset="onReset">
-          <q-input filled type="email" v-model="user.email" label="Email" required lazy-rules
-            :rules="[val => val && val.length > 0 || 'Email is required']" />
-
-          <q-input filled v-model="user.password" type="password" required label="Password" lazy-rules
-            :rules="[val => val && val.length > 0 || 'Password is required']" />
-          <q-separator />
-          <div class="q-pa-sm q-mt-md">
-            <q-btn label="Login" type="submit" color="primary" />
-            <q-btn label="Reset" type="reset" class="bg-grey-8 text-white q-ml-sm" />
-          </div>
-        </q-form>
-      </q-card-section>
-    </q-card>
-  </q-page>
-</template>
-
 <script setup>
 import { reactive, onMounted } from 'vue';
 import { Notify, Cookies } from 'quasar'
 import { useRouter } from 'vue-router';
 
 import { useAuthStore } from '@/stores/authStore';
-import { axiosAPI } from '@/api/axios';
+
+definePageMeta({
+  layout: 'default',
+  requireAuth: false,
+  middleware: "auth",
+  name: "loginPage"
+})
 
 const authStore = useAuthStore();
 const router = useRouter();
@@ -86,6 +63,36 @@ function onReset() {
   this.password = null
 }
 </script>
+
+<template>
+  <q-page class="flex flex-center">
+    <q-card v-if="!authStore.isAuthenticated" flat bordered class="my-card">
+      <q-card-section>
+        <div class="row items-center no-wrap">
+          <div class="col">
+            <div class="text-h6">Sign to your account</div>
+          </div>
+        </div>
+      </q-card-section>
+
+      <q-card-section>
+        <q-form @submit.prevent="login" @reset="onReset">
+          <q-input filled type="email" v-model="user.email" label="Email" required lazy-rules
+            :rules="[val => val && val.length > 0 || 'Email is required']" />
+
+          <q-input filled v-model="user.password" type="password" required label="Password" lazy-rules
+            :rules="[val => val && val.length > 0 || 'Password is required']" />
+          <q-separator />
+          <div class="q-pa-sm q-mt-md">
+            <q-btn label="Login" type="submit" color="primary" />
+            <q-btn label="Reset" type="reset" class="bg-grey-8 text-white q-ml-sm" />
+          </div>
+        </q-form>
+      </q-card-section>
+    </q-card>
+  </q-page>
+</template>
+
 
 <!-- <script>
 import { Notify } from 'quasar'

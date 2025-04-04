@@ -30,7 +30,7 @@ const $q = useQuasar();
 async function logout() {
     try {
         authStore.logout()
-        navigateTo('auth/login')
+        navigateTo({ name: "loginPage" })
         $q.notify({
             message: 'Logged out Successfully',
             type: "positive",
@@ -182,8 +182,8 @@ async function logout() {
                         <q-breadcrumbs-el label="Home" icon="home" to="/" />
                         <q-breadcrumbs-el label="About" icon="info" to="/about" />
                         <q-space />
-                        <q-breadcrumbs-el label="Login" icon="login" to="auth/login" />
-                        <q-breadcrumbs-el label="Register" icon="person_add" to="auth/register" />
+                        <q-breadcrumbs-el label="Login" icon="login" :to="{ name: 'loginPage' }" />
+                        <q-breadcrumbs-el label="Register" icon="person_add" :to="{ name: 'registerPage' }" />
                         <q-btn flat round :icon="$q.dark.isActive ? 'light_mode' : 'dark_mode'" @click="toggleTheme" />
                         <q-btn flat icon="menu" @click="toggleRightDrawer" />
                     </q-breadcrumbs>
@@ -263,7 +263,7 @@ async function logout() {
             <!-- drawer content -->
             <q-scroll-area style="height: calc(100% - 150px); border-right: 1px solid #ddd">
                 <q-list padding>
-                    <q-item clickable v-ripple to="auth/login">
+                    <q-item clickable v-ripple :to="{ name: 'loginPage' }">
                         <q-item-section avatar>
                             <q-icon name="login" />
                         </q-item-section>
@@ -272,7 +272,7 @@ async function logout() {
                             Login
                         </q-item-section>
                     </q-item>
-                    <q-item clickable v-ripple to="auth/register">
+                    <q-item clickable v-ripple :to="{ name: 'registerPage' }">
                         <q-item-section avatar>
                             <q-icon name="login" />
                         </q-item-section>

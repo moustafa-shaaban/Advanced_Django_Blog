@@ -291,7 +291,7 @@ ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 # https://docs.allauth.org/en/latest/account/configuration.html
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+# ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 # https://docs.allauth.org/en/latest/account/configuration.html
 ACCOUNT_ADAPTER = "django_blog_backend.users.adapters.AccountAdapter"
 # https://docs.allauth.org/en/latest/account/forms.html
@@ -357,7 +357,7 @@ CSRF_TRUSTED_ORIGINS = ["http://localhost:5173","http://localhost:3000" ]
 MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"
 
 ACCOUNT_LOGIN_BY_CODE_ENABLED = True
-ACCOUNT_EMAIL_VERIFICATION_BY_CODE_ENABLED = True
+# ACCOUNT_EMAIL_VERIFICATION_BY_CODE_ENABLED = True
 ACCOUNT_PASSWORD_RESET_BY_CODE_ENABLED = True
 MFA_SUPPORTED_TYPES = [
     "webauthn",
@@ -365,4 +365,4 @@ MFA_SUPPORTED_TYPES = [
     "recovery_codes",
 ]
 MFA_PASSKEY_LOGIN_ENABLED = True
-MFA_PASSKEY_SIGNUP_ENABLED = True
+# MFA_PASSKEY_SIGNUP_ENABLED = True
