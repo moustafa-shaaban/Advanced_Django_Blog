@@ -3,6 +3,7 @@ definePageMeta({
     layout: 'default',
     requireAuth: false,
     middleware: "auth",
+    name: "homePage"
 })
 </script>
 

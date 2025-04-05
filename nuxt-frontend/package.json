@@ -10,12 +10,14 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@hebilicious/vue-query-nuxt": "^0.3.0",
     "@nuxt/content": "^3.4.0",
     "@nuxt/fonts": "^0.11.0",
     "@nuxt/icon": "^1.11.0",
     "@nuxt/image": "^1.10.0",
     "@pinia/nuxt": "^0.10.1",
     "@quasar/extras": "^1.16.17",
+    "@tanstack/vue-query": "^5.71.5",
     "@vueuse/core": "^13.0.0",
     "axios": "^1.8.4",
     "nuxt": "^3.16.1",

@@ -66,7 +66,7 @@ async function logout() {
                                     <q-item clickable v-close-popup>
                                         <q-item-section>
                                             <q-breadcrumbs-el label="Post List" icon="home"
-                                                :to="{ name: 'posts-list' }" />
+                                                :to="{ name: 'restAPIAllPostsPage' }" />
                                         </q-item-section>
                                     </q-item>
 
@@ -92,8 +92,8 @@ async function logout() {
 
                                     <q-item clickable v-close-popup>
                                         <q-item-section>
-                                            <q-breadcrumbs-el label="Add Post" icon="notes"
-                                                :to="{ name: 'create-post' }" />
+                                            <q-breadcrumbs-el label="Create Post" icon="notes"
+                                                :to="{ name: 'restAPICreatePostsPage' }" />
                                         </q-item-section>
                                     </q-item>
 

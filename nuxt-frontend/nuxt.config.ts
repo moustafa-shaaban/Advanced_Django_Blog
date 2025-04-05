@@ -11,6 +11,7 @@ export default defineNuxtConfig({
     "@nuxt/image",
     "nuxt-quasar-ui",
     "@pinia/nuxt",
+    "@hebilicious/vue-query-nuxt",
   ],
   quasar: {
     plugins: [
@@ -23,9 +24,6 @@ export default defineNuxtConfig({
     ],
     extras: {
       font: "roboto-font",
-    },
-    config: {
-      dark: "auto",
     },
   },
 });
